@@ -1,10 +1,15 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import { SITE, CATEGORIES } from '../config';
-import { url } from '../lib/posts';
+import { SITE } from '../config';
+import Sidebar from '../components/Sidebar.astro';
 ---
 
 <BaseLayout title="关于我" description="我是朝辉，关注 AI 应用、Agent、知识库与办公自动化，记录实践与个人成长。">
-  <section class="container about-intro"><span class="eyebrow muted">HELLO, I’M CHAO HUI</span><h1>你好，我是朝辉<span class="title-dot">.</span></h1><p class="about-lead">一个愿意动手尝试，<br />也想把过程讲清楚的人。</p><div class="about-line" aria-hidden="true"></div></section>
-  <section class="container about-layout"><aside><span class="eyebrow muted">ABOUT THIS SPACE</span><p class="about-sidebar">做项目。<br />讲原理。<br />记录成长。</p></aside><div class="prose about-prose"><h2>为什么有这个网站</h2><p>这里是我的个人手记，关注 AI 应用、Agent、知识库、模型训练与办公自动化。我想把学习和工作中遇到的问题整理下来：当时为什么这样选，尝试过什么，结果说明了什么，还有哪些地方没想清楚。</p><p>有些内容是项目过程，有些是技术解释，也有一些只是工作与生活中的观察。希望每篇内容都能帮你理解一个问题，或推进一件具体的事。</p><h2>你可以从哪里开始</h2><div class="about-columns">{CATEGORIES.map((category) => <a href={url(`columns/${category.id}/`)}><strong>{category.name}<span aria-hidden="true">↗</span></strong><span>{category.description}</span></a>)}</div><h2>我希望怎样记录</h2><p>从具体例子开始，把选择和依据讲清楚。做过的、正在尝试的和准备做的，会分别说明；实验能说明到哪里，也尽量交代清楚。过程里的失败、犹豫与调整，同样值得留下。</p><h2>交流与合作</h2><p>如果你也在研究 AI 应用、知识库或工作流自动化，欢迎交流。可以先介绍你的具体场景、遇到的问题和希望达到的结果，让讨论从一件真实的事开始。</p><p><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">在 GitHub 找到我 ↗</a></p></div></section>
+  <div class="container blog-layout">
+    <section class="main-column">
+      <header class="page-heading"><h1>关于我</h1></header>
+      <div class="prose about-prose"><p>我是朝辉，在这里记录 AI 实践与个人成长。</p><p>关注 AI 应用、Agent、知识库、模型训练与办公自动化。</p><p><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">GitHub：zlzhl1</a></p></div>
+    </section>
+    <Sidebar />
+  </div>
 </BaseLayout>

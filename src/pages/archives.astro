@@ -1,0 +1,23 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Sidebar from '../components/Sidebar.astro';
+import { getPosts, postPath } from '../lib/posts';
+const posts = await getPosts();
+const months = new Map<string, typeof posts>();
+posts.forEach((post) => {
+  const month = post.data.date.toISOString().slice(0, 7);
+  if (!months.has(month)) months.set(month, []);
+  months.get(month)!.push(post);
+});
+const years = [...new Set([...months.keys()].map((month) => month.slice(0, 4)))];
+---
+<BaseLayout title="归档">
+  <div class="container blog-layout">
+    <section class="main-column">
+      <div class="page-heading"><h1>归档</h1><span>{posts.length} 篇</span></div>
+      {years.map((year) => <section><h2 class="archive-year">{year} 年</h2>{[...months].filter(([month]) => month.startsWith(year)).map(([month, entries]) => <section class="archive-month" id={month}><h3>{Number(month.slice(5))} 月</h3><ul class="archive-list">{entries.map((post) => <li><time datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(5, 10).replace('-', '/')}</time><a href={postPath(post)}>{post.data.title}</a></li>)}</ul></section>)}</section>)}
+      {posts.length === 0 && <p class="empty-message">暂无文章。</p>}
+    </section>
+    <Sidebar />
+  </div>
+</BaseLayout>

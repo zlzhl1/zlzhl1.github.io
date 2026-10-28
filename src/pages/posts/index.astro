@@ -1,19 +1,23 @@
 ---
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostRow from '../../components/PostRow.astro';
+import Sidebar from '../../components/Sidebar.astro';
 import { CATEGORIES } from '../../config';
 import { getPosts } from '../../lib/posts';
 const posts = await getPosts();
 ---
 
 <BaseLayout title="所有文章" description="朝辉的 AI 实践、技术解释、效率方法与个人手记。">
-  <section class="container page-intro"><span class="eyebrow muted">THE NOTEBOOK</span><h1>所有文章<span class="title-dot">.</span></h1><p>把走过的过程留下来，也给下一次尝试一点参考。</p></section>
-  <section class="container archive-section" aria-label="文章列表">
-    <div class="archive-toolbar"><div class="filter-buttons" aria-label="按栏目筛选"><button class="filter-button active" type="button" data-category="all" aria-pressed="true">全部 <span>{posts.length}</span></button>{CATEGORIES.map((category) => <button class="filter-button" type="button" data-category={category.id} aria-pressed="false">{category.name}</button>)}</div><label class="search-field"><span aria-hidden="true">⌕</span><span class="sr-only">搜索文章标题、摘要或标签</span><input type="search" id="article-search" placeholder="搜索标题、摘要或标签" autocomplete="off" /></label></div>
-    <p class="search-status" id="search-status" aria-live="polite">共 {posts.length} 篇文章</p>
-    <div id="article-list">{posts.map((post) => <div data-article data-category={post.data.category} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} /></div>)}</div>
-    <div id="no-results" class="empty-state" hidden><span aria-hidden="true">↳</span><h2>暂时没有找到这篇手记</h2><p>可以换个关键词，或切换到其他栏目看看。</p><button type="button" class="text-link" id="reset-search">清除筛选，查看全部文章 →</button></div>
-  </section>
+  <div class="container blog-layout">
+    <section class="main-column archive-section" aria-label="文章列表">
+      <header class="page-heading"><h1>所有文章</h1></header>
+      <div class="archive-toolbar"><div class="filter-buttons" aria-label="按栏目筛选"><button class="filter-button active" type="button" data-category="all" aria-pressed="true">全部</button>{CATEGORIES.map((category) => <button class="filter-button" type="button" data-category={category.id} aria-pressed="false">{category.name}</button>)}</div><label class="search-field"><span class="sr-only">搜索文章标题、摘要或标签</span><input type="search" id="article-search" placeholder="搜索文章" autocomplete="off" /></label></div>
+      <p class="search-status" id="search-status" aria-live="polite">共 {posts.length} 篇</p>
+      <div id="article-list">{posts.map((post) => <div data-article data-category={post.data.category} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} /></div>)}</div>
+      <div id="no-results" class="empty-state" hidden><p>没有找到文章。</p><button type="button" id="reset-search">重置筛选</button></div>
+    </section>
+    <Sidebar />
+  </div>
 </BaseLayout>
 
 <script>
@@ -31,7 +35,7 @@ const posts = await getPosts();
       article.hidden = !matches;
       if (matches) count++;
     });
-    if (status) status.textContent = query ? `找到 ${count} 篇与「${search?.value.trim()}」相关的文章` : `共 ${count} 篇文章`;
+    if (status) status.textContent = `共 ${count} 篇`;
     if (empty) empty.hidden = count !== 0;
     buttons.forEach((button) => {
       const selected = button.dataset.category === category;

@@ -1,0 +1,24 @@
+---
+import { SITE, CATEGORIES } from '../config';
+import { getPosts, url } from '../lib/posts';
+const posts = await getPosts();
+const months = new Map<string, number>();
+posts.forEach((post) => {
+  const month = post.data.date.toISOString().slice(0, 7);
+  months.set(month, (months.get(month) || 0) + 1);
+});
+---
+<aside class="sidebar" aria-label="博客导航">
+  <section class="sidebar-section">
+    <h2>栏目</h2>
+    <ul>{CATEGORIES.map((category) => <li><a href={url(`columns/${category.id}/`)}><span>{category.name}</span><span class="count">{posts.filter((post) => post.data.category === category.id).length}</span></a></li>)}</ul>
+  </section>
+  {months.size > 0 && <section class="sidebar-section">
+    <h2>归档</h2>
+    <ul>{[...months].slice(0, 12).map(([month, count]) => <li><a href={url(`archives/#${month}`)}><span>{month.slice(0, 4)} 年 {Number(month.slice(5))} 月</span><span class="count">{count}</span></a></li>)}</ul>
+  </section>}
+  <section class="sidebar-section">
+    <h2>链接</h2>
+    <ul><li><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">（新窗口打开）</span></a></li><li><a href={url('rss.xml')}>RSS</a></li></ul>
+  </section>
+</aside>

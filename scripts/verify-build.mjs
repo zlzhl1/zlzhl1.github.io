@@ -45,7 +45,7 @@ for (const file of pages) {
     }
   }
 }
-for (const required of ['index.html', 'posts/index.html', 'about/index.html', '404.html', 'rss.xml', 'sitemap.xml', 'robots.txt', 'columns/project/index.html', 'columns/lab/index.html', 'columns/explain/index.html', 'columns/journal/index.html']) {
+for (const required of ['index.html', 'posts/index.html', 'archives/index.html', 'about/index.html', '404.html', 'rss.xml', 'sitemap.xml', 'robots.txt', 'columns/project/index.html', 'columns/lab/index.html', 'columns/explain/index.html', 'columns/journal/index.html']) {
   if (!files.includes(path.join(root, required))) failures.push(`Missing required output: ${required}`);
 }
 const rss = await readFile(path.join(root, 'rss.xml'), 'utf8');
