@@ -1,0 +1,71 @@
+---
+import { SITE } from '../config';
+import { url } from '../lib/posts';
+import '../styles/global.css';
+
+interface Props {
+  title?: string;
+  description?: string;
+  article?: boolean;
+}
+
+const { title, description = SITE.description, article = false } = Astro.props;
+const pageTitle = title ? `${title} · ${SITE.title}` : SITE.title;
+const pathname = Astro.url.pathname;
+const canonical = new URL(pathname, SITE.siteUrl).href;
+const navigation = [
+  { name: '首页', href: url('') },
+  { name: '所有文章', href: url('posts/') },
+  { name: '关于我', href: url('about/') },
+];
+---
+
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="theme-color" content="#f7f6f0" />
+    <meta name="generator" content={Astro.generator} />
+    <link rel="canonical" href={canonical} />
+    <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+    <link rel="alternate" type="application/rss+xml" title={`${SITE.title} RSS`} href={url('rss.xml')} />
+    <meta property="og:type" content={article ? 'article' : 'website'} />
+    <meta property="og:locale" content="zh_CN" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <meta property="og:site_name" content={SITE.title} />
+    <title>{pageTitle}</title>
+  </head>
+  <body>
+    <a class="skip-link" href="#main">跳转到正文</a>
+    <header class="site-header">
+      <div class="container header-inner">
+        <a class="brand" href={url('')} aria-label={`${SITE.title}首页`}>
+          <span class="brand-mark" aria-hidden="true">辉<span></span></span>
+          <span class="brand-name">{SITE.title}<small>CHAO HUI / FIELD NOTES</small></span>
+        </a>
+        <nav class="main-nav" aria-label="主导航">
+          {navigation.map((item) => (
+            <a
+              href={item.href}
+              class:list={{ active: item.href === url('') ? pathname === item.href : pathname.startsWith(item.href) }}
+              aria-current={(item.href === url('') ? pathname === item.href : pathname.startsWith(item.href)) ? 'page' : undefined}
+            >{item.name}</a>
+          ))}
+          <a class="github-link" href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">GitHub <span aria-hidden="true">↗</span><span class="sr-only">（新窗口打开）</span></a>
+        </nav>
+      </div>
+    </header>
+    <main id="main"><slot /></main>
+    <footer class="site-footer">
+      <div class="container footer-inner">
+        <div><a class="footer-title" href={url('')}>{SITE.title}</a><p>认真做一点，也认真记录一点。</p></div>
+        <div class="footer-links"><a href={url('posts/')}>文章归档</a><a href={url('rss.xml')}>RSS 订阅</a><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">GitHub ↗</a></div>
+        <small>© {new Date().getFullYear()} {SITE.author}<br />以文字留下一点思考。</small>
+      </div>
+    </footer>
+  </body>
+</html>

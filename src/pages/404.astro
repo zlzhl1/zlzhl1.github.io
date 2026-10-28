@@ -1,0 +1,7 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { url } from '../lib/posts';
+---
+<BaseLayout title="页面没有找到">
+  <section class="container not-found"><span class="eyebrow muted">A SMALL DETOUR / 404</span><p class="not-found-number" aria-hidden="true">404<span>↳</span></p><h1>这页手记，还没找到。</h1><p>链接可能发生了变化。回到文章目录，继续找找感兴趣的内容。</p><a class="button button-primary" href={url('posts/')}>去看所有文章 →</a></section>
+</BaseLayout>

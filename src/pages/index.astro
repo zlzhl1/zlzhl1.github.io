@@ -1,0 +1,56 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import PostRow from '../components/PostRow.astro';
+import { SITE, CATEGORIES } from '../config';
+import { getPosts, url } from '../lib/posts';
+const posts = await getPosts();
+const latest = posts.slice(0, 5);
+---
+
+<BaseLayout>
+  <section class="container hero">
+    <div class="hero-copy">
+      <div class="eyebrow"><span class="status-dot"></span>一个 AI 应用实践者的持续记录</div>
+      <h1>把 AI 用进工作，<br />把过程写成<span class="hand-underline">手记。</span></h1>
+      <p class="hero-description">你好，我是朝辉。<br />在这里拆解项目、解释原理、尝试更好的工作方法，<br class="desktop-break" />也记录那些慢慢形成的判断。</p>
+      <div class="hero-actions"><a class="button button-primary" href={url('posts/')}>从一篇文章开始 <span aria-hidden="true">↗</span></a><a class="text-link" href={url('about/')}>认识一下我 <span aria-hidden="true">→</span></a></div>
+      <div class="hero-topics"><span>CURRENT FOCUS</span><p>Agent <i>·</i> 知识库 <i>·</i> 自动化 <i>·</i> 个人成长</p></div>
+    </div>
+    <div class="field-note" aria-label="从问题、尝试、验证到记录的实践过程">
+      <div class="note-corner" aria-hidden="true"></div>
+      <div class="note-topline"><span>WORK IN PROGRESS</span><span class="note-star" aria-hidden="true">✳</span></div>
+      <p class="note-heading">从一个具体问题开始。</p>
+      <svg class="note-route" viewBox="0 0 340 215" fill="none" aria-hidden="true">
+        <path d="M48 39H235Q290 39 290 87Q290 129 235 129H94Q48 129 48 174V190" stroke="#ccd5cc" stroke-width="2" stroke-dasharray="5 6" />
+        <circle cx="48" cy="39" r="9" fill="#26705b"/><circle cx="290" cy="84" r="8" fill="#f7f6f0" stroke="#26705b" stroke-width="2"/>
+        <circle cx="173" cy="129" r="8" fill="#e9ad67"/><circle cx="48" cy="190" r="9" fill="#26705b"/>
+        <path d="M44 39L47 42L53 35" stroke="white" stroke-width="1.8"/><path d="M44 190L47 193L53 186" stroke="white" stroke-width="1.8"/>
+        <text x="68" y="20">01 提出问题</text><text x="203" y="108">02 动手尝试</text><text x="111" y="157">03 检查结果</text><text x="68" y="207">04 留下记录</text>
+      </svg>
+      <div class="note-bottom"><span>过程值得留下。</span><span class="note-signature">朝辉</span></div>
+    </div>
+  </section>
+
+  <section class="columns-section">
+    <div class="container">
+      <div class="section-heading"><div><span class="eyebrow muted">FOUR WAYS OF LOOKING</span><h2>四个栏目，一条实践的线。</h2></div><span class="section-note">从怎么做，到怎么想</span></div>
+      <div class="columns-grid">
+        {CATEGORIES.map((category, index) => {
+          const count = posts.filter((post) => post.data.category === category.id).length;
+          return <a class={`column-entry column-${category.id}`} href={url(`columns/${category.id}/`)}>
+            <div class="column-top"><span class="column-index">0{index + 1}</span><span class="column-arrow" aria-hidden="true">↗</span></div>
+            <h3>{category.name}</h3><p>{category.description}</p>
+            <span class="column-count">{count > 0 ? `${count} 篇手记` : '首篇正在准备'}</span>
+          </a>;
+        })}
+      </div>
+    </div>
+  </section>
+
+  <section class="container latest-section">
+    <div class="section-heading"><div><span class="eyebrow muted">LATEST NOTES</span><h2>最近写下的</h2></div><a class="text-link" href={url('posts/')}>全部文章 <span aria-hidden="true">→</span></a></div>
+    <div class="latest-layout"><div class="post-list">{latest.map((post, index) => <PostRow post={post} number={String(index + 1).padStart(2, '0')} />)}{latest.length === 0 && <p class="empty-message">第一篇手记正在准备中，欢迎过段时间再来看看。</p>}</div><aside class="small-note"><span class="eyebrow">A NOTE TO MYSELF</span><p>从具体的问题出发，<br />让每一次尝试<br />留下可复用的东西。</p><span class="small-note-line" aria-hidden="true"></span><p class="small-note-detail">这里会有做成的事，<br />也会有没想清楚的问题。</p><a class="text-link" href={url('rss.xml')}>用 RSS 慢慢读 <span aria-hidden="true">↗</span></a></aside></div>
+  </section>
+
+  <section class="container conversation-section"><div><span class="eyebrow muted">LET’S TALK</span><h2>你也在解决类似的问题？</h2><p>欢迎交流 AI 应用、知识库与自动化的想法。<br />带着一个具体场景，我们可以聊得更深入。</p></div><a class="button button-outline" href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">在 GitHub 找到我 <span aria-hidden="true">↗</span><span class="sr-only">（新窗口打开）</span></a></section>
+</BaseLayout>
