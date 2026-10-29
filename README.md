@@ -1,4 +1,4 @@
-# Zhaohui 的 AI 手记
+# 戴夫（Dave）的 AI 手记
 
 使用官方 [withastro/astro](https://github.com/withastro/astro) 框架构建的个人博客。文章和栏目均由 Markdown 文件管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。
 
@@ -93,7 +93,7 @@ npm.cmd run verify
 
 ## 网站配置与部署
 
-- 名称、简介、作者和 GitHub 入口：`src/config.ts`。作者的英文拼写为 **Zhaohui**。
+- 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
 - 融合背景：`public/images/ai-unified-background.webp`；提示词见 [背景记录](docs/background-prompt.md)。
 - 页面样式：`src/styles/global.css` 与 `src/styles/themes.css`。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。

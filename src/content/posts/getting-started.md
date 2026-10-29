@@ -1,5 +1,5 @@
 ---
-title: "从这里开始：Zhaohui 的 AI 手记"
+title: "从这里开始：戴夫（Dave）的 AI 手记"
 description: "记录 AI 应用里的具体问题、做事的方法，以及实践中的判断与成长。"
 date: 2026-10-28
 tags: ["关于本站", "个人成长", "AI 应用"]
