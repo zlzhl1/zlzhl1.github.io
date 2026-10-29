@@ -24,7 +24,7 @@ jobs:
         uses: withastro/action@v6
         with:
           node-version: 24
-          build-cmd: npm run check && npm run build && npm run verify
+          build-cmd: npm run check && npm run verify:content && npm run build && npm run verify
   deploy:
     needs: build
     runs-on: ubuntu-latest

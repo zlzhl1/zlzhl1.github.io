@@ -2,18 +2,18 @@
 import BaseLayout from '../../layouts/BaseLayout.astro';
 import PostRow from '../../components/PostRow.astro';
 import Sidebar from '../../components/Sidebar.astro';
-import { CATEGORIES } from '../../config';
-import { getPosts } from '../../lib/posts';
-const posts = await getPosts();
+import { getPosts, getColumns } from '../../lib/posts';
+import { SITE } from '../../config';
+const [posts, columns] = await Promise.all([getPosts(), getColumns()]);
 ---
 
-<BaseLayout title="所有文章" description="朝辉的 AI 实践、技术解释、效率方法与个人手记。">
+<BaseLayout title="所有文章" description={`${SITE.author} 的文章与记录。`}>
   <div class="container blog-layout">
     <section class="main-column archive-section" aria-label="文章列表">
       <header class="page-heading"><h1>所有文章</h1></header>
-      <div class="archive-toolbar"><div class="filter-buttons" aria-label="按栏目筛选"><button class="filter-button active" type="button" data-category="all" aria-pressed="true">全部</button>{CATEGORIES.map((category) => <button class="filter-button" type="button" data-category={category.id} aria-pressed="false">{category.name}</button>)}</div><label class="search-field"><span class="sr-only">搜索文章标题、摘要或标签</span><input type="search" id="article-search" placeholder="搜索文章" autocomplete="off" /></label></div>
+      <div class="archive-toolbar">{columns.length > 0 && <div class="filter-buttons" aria-label="按栏目筛选"><button class="filter-button active" type="button" aria-pressed="true">全部</button>{columns.map((column) => <button class="filter-button" type="button" data-column={column.id} aria-pressed="false">{column.data.title}</button>)}</div>}<label class="search-field"><span class="sr-only">搜索文章标题、摘要或标签</span><input type="search" id="article-search" placeholder="搜索文章" autocomplete="off" /></label></div>
       <p class="search-status" id="search-status" aria-live="polite">共 {posts.length} 篇</p>
-      <div id="article-list">{posts.map((post) => <div data-article data-category={post.data.category} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} /></div>)}</div>
+      <div id="article-list">{posts.map((post) => <div data-article data-column={post.data.column?.id || ''} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} /></div>)}</div>
       <div id="no-results" class="empty-state" hidden><p>没有找到文章。</p><button type="button" id="reset-search">重置筛选</button></div>
     </section>
     <Sidebar />
@@ -26,24 +26,24 @@ const posts = await getPosts();
   const articles = document.querySelectorAll<HTMLElement>('[data-article]');
   const status = document.querySelector('#search-status');
   const empty = document.querySelector<HTMLElement>('#no-results');
-  let category = 'all';
+  let column: string | undefined;
   const update = () => {
     const query = search?.value.trim().toLocaleLowerCase() || '';
     let count = 0;
     articles.forEach((article) => {
-      const matches = (category === 'all' || article.dataset.category === category) && (article.dataset.search || '').includes(query);
+      const matches = (column === undefined || article.dataset.column === column) && (article.dataset.search || '').includes(query);
       article.hidden = !matches;
       if (matches) count++;
     });
     if (status) status.textContent = `共 ${count} 篇`;
     if (empty) empty.hidden = count !== 0;
     buttons.forEach((button) => {
-      const selected = button.dataset.category === category;
+      const selected = button.dataset.column === column;
       button.classList.toggle('active', selected);
       button.setAttribute('aria-pressed', String(selected));
     });
   };
   search?.addEventListener('input', update);
-  buttons.forEach((button) => button.addEventListener('click', () => { category = button.dataset.category || 'all'; update(); }));
-  document.querySelector('#reset-search')?.addEventListener('click', () => { category = 'all'; if (search) search.value = ''; update(); search?.focus(); });
+  buttons.forEach((button) => button.addEventListener('click', () => { column = button.dataset.column; update(); }));
+  document.querySelector('#reset-search')?.addEventListener('click', () => { column = undefined; if (search) search.value = ''; update(); search?.focus(); });
 </script>

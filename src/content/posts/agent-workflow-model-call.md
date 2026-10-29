@@ -2,7 +2,6 @@
 title: "Agent、工作流与普通模型调用，怎样选择？"
 description: "从三个工作场景出发，理解下一步由谁决定，以及什么时候值得增加系统复杂度。"
 date: 2026-10-28
-category: explain
 tags: ["Agent", "Workflow", "AI 应用"]
 draft: false
 featured: true

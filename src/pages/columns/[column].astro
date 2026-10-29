@@ -1,0 +1,19 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import PostRow from '../../components/PostRow.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getPosts, getColumns, url } from '../../lib/posts';
+export async function getStaticPaths() { return (await getColumns()).map((column) => ({ params: { column: column.id }, props: { column } })); }
+const { column } = Astro.props;
+const posts = (await getPosts()).filter((post) => post.data.column?.id === column.id);
+---
+
+<BaseLayout title={column.data.title} description={column.data.description || undefined}>
+  <div class="container blog-layout">
+    <section class="main-column column-posts">
+      <header class="page-heading"><h1>{column.data.title}</h1><span>{posts.length} 篇</span></header>
+      {posts.length ? <div class="post-list">{posts.map((post) => <PostRow post={post} />)}</div> : <div class="empty-state"><p>暂无文章。</p><a href={url('posts/')}>查看所有文章</a></div>}
+    </section>
+    <Sidebar />
+  </div>
+</BaseLayout>

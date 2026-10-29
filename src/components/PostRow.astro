@@ -1,15 +1,15 @@
 ---
 import type { CollectionEntry } from 'astro:content';
-import { categoryFor, formatDate, postPath, url } from '../lib/posts';
+import { getPostColumn, columnPath, formatDate, postPath } from '../lib/posts';
 interface Props { post: CollectionEntry<'posts'>; number?: string; }
 const { post } = Astro.props;
-const category = categoryFor(post.data.category);
+const column = await getPostColumn(post);
 ---
 
 <article class="post-row">
   <header class="post-header">
     <h2 class="post-title"><a href={postPath(post)}>{post.data.title}</a></h2>
-    <div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time><a href={url(`columns/${post.data.category}/`)}>{category.name}</a></div>
+    <div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>{column && <a href={columnPath(column)}>{column.data.title}</a>}</div>
   </header>
   <p class="post-description">{post.data.description}</p>
 </article>

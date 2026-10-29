@@ -1,0 +1,18 @@
+---
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Sidebar from '../../components/Sidebar.astro';
+import { getColumns, getPosts, columnPath } from '../../lib/posts';
+const [columns, posts] = await Promise.all([getColumns(), getPosts()]);
+---
+<BaseLayout title="栏目">
+  <div class="container blog-layout">
+    <section class="main-column">
+      <h1 class="page-heading">栏目</h1>
+      {columns.length > 0 ? <ul class="column-list">{columns.map((column) => <li>
+        <a href={columnPath(column)}><span>{column.data.title}</span><span class="count">{posts.filter((post) => post.data.column?.id === column.id).length} 篇</span></a>
+        {column.data.description && <p>{column.data.description}</p>}
+      </li>)}</ul> : <p class="empty-message">暂无栏目。</p>}
+    </section>
+    <Sidebar />
+  </div>
+</BaseLayout>

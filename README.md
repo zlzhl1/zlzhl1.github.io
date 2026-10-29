@@ -1,126 +1,107 @@
-# 朝辉的 AI 手记
+# Zhaohui 的 AI 手记
 
-一个使用 Astro 构建的中文个人博客，记录 AI 应用实践、技术解释、可复用方法和个人成长。网站静态生成，文章使用 Markdown 维护，通过 GitHub Actions 部署到 GitHub Pages。
+使用官方 [withastro/astro](https://github.com/withastro/astro) 框架构建的个人博客。文章和栏目均由 Markdown 文件管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。
 
-## 背景主题
+## 在 GitHub 管理内容
 
-网站使用一张融合大模型、训练、AI 工作流与 Agent 协作元素的完整背景图。图片位于 `public/images/ai-unified-background.webp`，生成提示词记录在 `docs/background-prompt.md`。背景与阅读区域样式集中在 `src/styles/themes.css`，图片组件在 `src/components/AIBackdrop.astro`。
+打开 [网站源码仓库](https://github.com/zlzhl1/zlzhl1.github.io)，登录你的 `zlzhl1` 账号后操作。只有具有仓库写入权限的账号才能提交或合并内容到 `main` 并发布网站；保持仓库写入权限只授予你，就只有你能维护。公开网站没有新增、编辑或转移入口，访客的 Fork 或 Pull Request 不会直接改动网站。
 
-## 本地运行
+每次提交到 `main` 后，在仓库的 **Actions** 查看部署结果。成功后，变更才会出现在网站上。
 
-先安装符合项目 `package.json` 要求的 Node.js。在 Windows PowerShell 中使用 `npm.cmd`，不需要调整执行策略。
+### 新增栏目
 
-```powershell
-# 在项目目录中安装依赖
-npm.cmd install
+网站不预设栏目。你需要时再添加，无需修改页面或程序代码。
 
-# 启动开发服务器，打开终端显示的本地地址
-npm.cmd run dev
+1. 在仓库点击 **Add file → Create new file**。
+2. 文件名填写 `src/content/columns/ai-notes.md`。`ai-notes` 是栏目 ID，可换成你自己的英文短名，建议使用小写字母、数字和连字符。
+3. 从 [栏目模板](templates/column.md) 复制内容，填写名称，例如：
 
-# 生成静态网站
-npm.cmd run build
-
-# 预览构建结果
-npm.cmd run preview
+```markdown
+---
+title: "大模型笔记"
+description: ""
+order: 0
+---
 ```
 
-仓库已有 `package-lock.json` 时，自动部署使用 `npm ci` 安装锁定依赖；本地也可以使用 `npm.cmd ci`。
+4. 点击 **Commit changes**，提交到 `main`。新增的栏目会在下次部署后自动出现在网站中，即使暂时没有文章也可访问。
 
-## 写一篇文章
+`title` 必填；`description` 可省略；`order` 可省略，默认 `0`，数字越小越靠前。修改 `title` 只改显示名称，不改变栏目链接。栏目 ID 来自文件名，重命名文件时需要同步修改引用它的文章。
 
-在 `src/content/posts/` 下新增一个英文短名的 `.md` 文件，例如 `my-first-experiment.md`。文件名会作为文章链接的一部分，发表后尽量保持稳定。
+### 新增文章
+
+1. 点击 **Add file → Create new file**，填写 `src/content/posts/my-first-note.md`。
+2. 从 [文章模板](templates/article.md) 复制内容，填写文章信息与 Markdown 正文。
+3. 如果要放入某个栏目，在开头的 `---` 之间填写 `column: ai-notes`；先确认 `src/content/columns/ai-notes.md` 已存在。也可以省略 `column`，文章仍会显示在首页、全部文章和归档中。
+4. 草稿完成后把 `draft` 改为 `false`，确认发布日期，再提交到 `main`。
 
 ```markdown
 ---
 title: "文章标题"
-description: "用一句话说明读者能从文章中获得什么。"
-date: 2026-11-03
-category: project
-tags: ["知识库", "验收"]
+description: "用一句话说明文章内容。"
+date: 2026-10-29
+column: ai-notes
+tags: ["大模型"]
 draft: true
 featured: false
 ---
 
-从一个具体问题开始写正文。
-
-## 发生了什么
-
-说明输入、过程、结果，以及适用范围。
+正文使用 Markdown 编写。
 ```
-
-字段说明：
 
 | 字段 | 用法 |
 | --- | --- |
-| `title` | 文章标题 |
-| `description` | 列表摘要与页面描述 |
-| `date` | 发布日期，使用 `YYYY-MM-DD` |
-| `category` | 下面四个栏目 ID 之一 |
-| `tags` | 字符串数组，帮助描述内容 |
-| `draft` | 草稿设为 `true`，不会出现在公开网站中；确认后改为 `false` |
-| `featured` | 是否作为精选文章，具体展示由首页决定 |
+| `title` | 必填，文章标题 |
+| `description` | 必填，列表摘要与页面描述 |
+| `date` | 必填，发布日期，格式为 `YYYY-MM-DD` |
+| `column` | 可选，只填写一个已存在的栏目 ID，不填写数组 |
+| `tags` | 可选，字符串数组 |
+| `draft` | 可选，默认 `false`；设为 `true` 后不公开 |
+| `featured` | 可选，保留的精选标记，默认 `false` |
 
-本地预览和生产构建都隐藏草稿。写作计划放在 `editorial/`，不会被文章集合读取。
+文章地址由文件名生成，例如 `/posts/my-first-note/`。发表后保留原文件名，修改标题和栏目不会改变文章链接。
 
-未来日期的文章也会隐藏。到达发布日期后，需要再次推送或手动运行部署工作流，网站才会重新构建并显示文章。
+草稿和未来日期的文章不会公开。到达发布日期后，需要再次提交或在 **Actions** 手动运行部署，网站才会重新构建。模板在 `templates/`，写作计划在 `editorial/`，都不会自动成为文章或栏目。
 
-## 四个栏目
+### 将文章转移到其他栏目
 
-| ID | 栏目 | 适合的内容 |
-| --- | --- | --- |
-| `project` | 项目现场 | 问题、方案选择、实现、验证与复盘 |
-| `lab` | 效率实验室 | 工作流、模板、清单和小工具 |
-| `explain` | 技术白话 | 用具体例子解释 Agent、RAG、训练与评测 |
-| `journal` | 个人手记 | 工作判断、学习过程、职业选择与生活观察 |
+1. 打开**原来的**文章文件，例如 `src/content/posts/my-first-note.md`，点击铅笔图标编辑。
+2. 将原有的 `column: ai-notes` 改为目标栏目的 ID，例如 `column: engineering-notes`。目标栏目必须已存在。
+3. 提交这一个文件的修改到 `main`。
 
-修改网站名称、简介和 GitHub 入口时，查看 `src/config.ts`。新增栏目还需要同步内容 Schema 与栏目配置。
+这是转移原文章：原栏目不再列出它，目标栏目开始列出它，文章总数与链接保持不变。不要复制文章，不要新增第二个 `column` 字段，也不要为了转移栏目而改文件名。要取消栏目归属，删除 `column` 这一行即可。
 
-## 部署到 GitHub Pages
+删除栏目之前，先把引用它的文章转移到其他栏目或删除其 `column` 字段，再删除栏目文件。引用不存在的栏目会导致构建失败，避免文章被悄悄归错栏目。
 
-源码仓库可以采用以下两种名称：
+## 本地运行
 
-| 仓库 | 默认网站地址 |
-| --- | --- |
-| `zlzhl1/zlzhl1.github.io` | `https://zlzhl1.github.io/` |
-| `zlzhl1/chaohui-ai-notes` | `https://zlzhl1.github.io/chaohui-ai-notes/` |
-
-项目的 Astro 配置会根据 GitHub Actions 提供的 `GITHUB_REPOSITORY` 推断网站域名和基础路径：个人站点仓库使用根路径，普通项目仓库使用仓库名作为路径前缀。不要手动把所有链接改成以 `/` 开头的固定地址。
-
-发布步骤：
-
-1. 在 GitHub 创建用于本站的仓库，将本项目源码推送到 `main` 分支。
-2. 打开仓库 **Settings → Pages → Build and deployment → Source**，选择 **GitHub Actions**。
-3. 确认仓库允许执行 Actions；查看 **Actions** 中的部署工作流。
-4. 等构建与部署完成后，使用 Pages 返回的网站地址访问。
-5. 以后修改文章并推送到 `main`，工作流会重新构建和部署。
-
-GitHub Free 的 Pages 使用公开仓库。公开前只保留网站源码、可公开文章和必要配置；不要放入内部材料、凭据或私人附件。
-
-需要自定义地址时，可以使用这些构建环境变量：
-
-- `PUBLIC_SITE_URL`：完整站点域名，例如 `https://notes.example.com`。
-- `SITE_BASE`：手动覆盖基础路径，例如 `/` 或 `/chaohui-ai-notes`。
-
-示例，仅影响当前 PowerShell 会话：
+使用 `package.json` 要求的 Node.js 版本。在 Windows PowerShell 中使用 `npm.cmd`，无需调整执行策略。
 
 ```powershell
-$env:PUBLIC_SITE_URL = 'https://notes.example.com'
-$env:SITE_BASE = '/'
-npm.cmd run build
+npm.cmd ci
+npm.cmd run dev
 ```
 
-自定义域名还需要在 GitHub Pages 设置和域名服务商处配置。构建环境变量本身不会完成域名绑定。
+发布前检查：
 
-## 维护约定
+```powershell
+npm.cmd run check
+npm.cmd run verify:content
+npm.cmd run build
+npm.cmd run verify
+```
 
-- 修改文章后先运行构建，再检查本地页面、手机布局和文章链接。
-- 网站没有自建后台、用户登录、邮件订阅或提交表单。内容通过 Markdown 与 Git 管理，联系入口使用 GitHub。
-- 文章涉及实验时，写清资料、运行环境、验证方法和实际观察；构造案例明确标注为示例。
-- 不把本地演示、历史数据或未验证方案写成当前线上成果。
-- 旧文章需要更正时直接修改源文件，必要时在正文中补充更新说明。
+## 网站配置与部署
 
-## 参考文档
+- 名称、简介、作者和 GitHub 入口：`src/config.ts`。作者的英文拼写为 **Zhaohui**。
+- 融合背景：`public/images/ai-unified-background.webp`；提示词见 [背景记录](docs/background-prompt.md)。
+- 页面样式：`src/styles/global.css` 与 `src/styles/themes.css`。
+- 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
-- [Astro：部署到 GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)
-- [GitHub：创建 GitHub Pages 网站](https://docs.github.com/en/pages/getting-started-with-github-pages/creating-a-github-pages-site)
-- [GitHub：配置发布源](https://docs.github.com/en/pages/getting-started-with-github-pages/configuring-a-publishing-source-for-your-github-pages-site)
+当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
+
+## 官方参考
+
+- [Astro 内容集合](https://docs.astro.build/en/guides/content-collections/)
+- [Astro 中的 Markdown](https://docs.astro.build/en/guides/markdown-content/)
+- [部署到 GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)

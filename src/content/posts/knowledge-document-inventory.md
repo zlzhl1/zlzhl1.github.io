@@ -2,7 +2,6 @@
 title: "做知识库之前，先整理好这张文档清单"
 description: "用一张可复制的资料清单，提前发现来源缺失、版本冲突和重复文档。"
 date: 2026-10-28
-category: lab
 tags: ["知识库", "文档整理", "模板"]
 draft: false
 featured: false

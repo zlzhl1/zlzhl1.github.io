@@ -1,5 +1,5 @@
 ---
-import { SITE, CATEGORIES } from '../config';
+import { SITE } from '../config';
 import { url } from '../lib/posts';
 import AIBackdrop from '../components/AIBackdrop.astro';
 import '../styles/global.css';
@@ -12,8 +12,8 @@ const pathname = Astro.url.pathname;
 const canonical = new URL(pathname, SITE.siteUrl).href;
 const navigation = [
   { name: '首页', href: url() },
-  ...CATEGORIES.map((category) => ({ name: category.name, href: url(`columns/${category.id}/`) })),
   { name: '全部文章', href: url('posts/') },
+  { name: '栏目', href: url('columns/') },
   { name: '归档', href: url('archives/') },
   { name: '关于', href: url('about/') },
 ];
