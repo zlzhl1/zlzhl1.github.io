@@ -4,7 +4,7 @@
 
 ## 背景主题
 
-站名下方可切换“大模型、训练、工作流、Agent”四种背景主题，浏览器会记住选择。图案使用本地 SVG，配色与阅读区域样式集中在 `src/styles/themes.css`，图形在 `src/components/AIBackdrop.astro`。
+网站使用一张融合大模型、训练、AI 工作流与 Agent 协作元素的完整背景图。图片位于 `public/images/ai-unified-background.webp`，生成提示词记录在 `docs/background-prompt.md`。背景与阅读区域样式集中在 `src/styles/themes.css`，图片组件在 `src/components/AIBackdrop.astro`。
 
 ## 本地运行
 
