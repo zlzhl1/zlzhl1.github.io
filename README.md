@@ -2,6 +2,10 @@
 
 一个使用 Astro 构建的中文个人博客，记录 AI 应用实践、技术解释、可复用方法和个人成长。网站静态生成，文章使用 Markdown 维护，通过 GitHub Actions 部署到 GitHub Pages。
 
+## 背景主题
+
+站名下方可切换“大模型、训练、工作流、Agent”四种背景主题，浏览器会记住选择。图案使用本地 SVG，配色与阅读区域样式集中在 `src/styles/themes.css`，图形在 `src/components/AIBackdrop.astro`。
+
 ## 本地运行
 
 先安装符合项目 `package.json` 要求的 Node.js。在 Windows PowerShell 中使用 `npm.cmd`，不需要调整执行策略。

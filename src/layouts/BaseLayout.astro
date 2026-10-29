@@ -1,7 +1,9 @@
 ---
 import { SITE, CATEGORIES } from '../config';
 import { url } from '../lib/posts';
+import AIBackdrop from '../components/AIBackdrop.astro';
 import '../styles/global.css';
+import '../styles/themes.css';
 
 interface Props { title?: string; description?: string; article?: boolean; }
 const { title, description = SITE.description, article = false } = Astro.props;
@@ -15,14 +17,30 @@ const navigation = [
   { name: '归档', href: url('archives/') },
   { name: '关于', href: url('about/') },
 ];
+const backgroundThemes = [
+  { id: 'model', name: '大模型' },
+  { id: 'training', name: '训练' },
+  { id: 'workflow', name: '工作流' },
+  { id: 'agent', name: 'Agent' },
+];
 ---
 <!doctype html>
-<html lang="zh-CN">
+<html lang="zh-CN" data-ai-theme="model">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
-    <meta name="theme-color" content="#ffffff" />
+    <meta name="theme-color" content="#f1f6ff" />
+    <script is:inline>
+      (() => {
+        let theme = 'model';
+        try {
+          const saved = localStorage.getItem('chaohui-ai-theme');
+          if (['model', 'training', 'workflow', 'agent'].includes(saved)) theme = saved;
+        } catch {}
+        document.documentElement.dataset.aiTheme = theme;
+      })();
+    </script>
     <link rel="canonical" href={canonical} />
     <link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
     <link rel="alternate" type="application/rss+xml" title={`${SITE.title} RSS`} href={url('rss.xml')} />
@@ -37,8 +55,14 @@ const navigation = [
   <body>
     <a class="skip-link" href="#main">跳转到正文</a>
     <header class="site-header">
+      <AIBackdrop />
       <div class="container">
-        <a class="site-title" href={url()}>{SITE.title}</a>
+        <div class="header-masthead">
+          <a class="site-title" href={url()}>{SITE.title}</a>
+          <div class="theme-switcher" role="group" aria-label="背景主题">
+            {backgroundThemes.map((theme) => <button class="theme-choice" type="button" data-theme-choice={theme.id} aria-label={`切换到${theme.name}主题`} aria-pressed={theme.id === 'model'} disabled><span class={`theme-dot theme-dot-${theme.id}`} aria-hidden="true"></span>{theme.name}</button>)}
+          </div>
+        </div>
         <nav class="main-nav" aria-label="主导航">
           {navigation.map((item) => {
             const active = item.href === url() ? pathname === item.href : pathname.startsWith(item.href);
@@ -51,3 +75,21 @@ const navigation = [
     <footer class="site-footer"><div class="container">© {new Date().getFullYear()} {SITE.author}</div></footer>
   </body>
 </html>
+
+<script>
+  const themeNames = ['model', 'training', 'workflow', 'agent'];
+  const themeButtons = document.querySelectorAll<HTMLButtonElement>('[data-theme-choice]');
+  const root = document.documentElement;
+  const applyTheme = (value: string) => {
+    const theme = themeNames.includes(value) ? value : 'model';
+    root.dataset.aiTheme = theme;
+    themeButtons.forEach((button) => button.setAttribute('aria-pressed', String(button.dataset.themeChoice === theme)));
+    try { localStorage.setItem('chaohui-ai-theme', theme); } catch {}
+  };
+  themeButtons.forEach((button) => {
+    button.disabled = false;
+    button.addEventListener('click', () => applyTheme(button.dataset.themeChoice || 'model'));
+  });
+  applyTheme(root.dataset.aiTheme || 'model');
+  root.dataset.themesReady = 'true';
+</script>
