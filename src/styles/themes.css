@@ -31,9 +31,24 @@ body {
   min-height: clamp(182px, 28vw, 384px);
   display: flex;
   align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
   padding-block: 32px 24px;
 }
 .site-title { margin-bottom: 0; letter-spacing: .035em; }
+.github-link {
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  width: 44px;
+  height: 44px;
+  color: #29313c;
+  background: rgba(255,255,255,.88);
+  border: 1px solid rgba(220,229,239,.9);
+  border-radius: 50%;
+}
+.github-link:hover { color: var(--accent); background: #fff; }
+.github-link svg { display: block; }
 .main-nav { border-bottom: 0; gap: 29px; background: rgba(255,255,255,.88); }
 .main-nav a { padding-bottom: 13px; }
 .main-nav a.active:after { bottom: 0; }
