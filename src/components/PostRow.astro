@@ -2,18 +2,35 @@
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from './FormattedDate.astro';
 import { getPostColumn, columnPath, postPath } from '../lib/posts';
-interface Props { post: CollectionEntry<'posts'>; }
-const { post } = Astro.props;
+interface Props { post: CollectionEntry<'posts'>; number?: string; }
+const { post, number } = Astro.props;
 const column = await getPostColumn(post);
 ---
 <article class="post-row">
+  <div class="entry-top"><span class="entry-number">{number || '—'}</span><FormattedDate date={post.data.date} /></div>
   <h2 class="title"><a href={postPath(post)}>{post.data.title}</a></h2>
-  <p class="date"><FormattedDate date={post.data.date} />{column && <> · <a href={columnPath(column)}>{column.data.title}</a></>}</p>
+  <p class="description">{post.data.description}</p>
+  <div class="entry-bottom"><div class="entry-tags">{column ? <a href={columnPath(column)}>{column.data.title}</a> : post.data.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div><span class="entry-arrow" aria-hidden="true">↗</span></div>
 </article>
 <style>
-  .title { margin: 0; font-size: 1.563em; line-height: 1.2; }
-  .title a { display: block; color: rgb(var(--black)); text-decoration: none; }
-  .date { margin: .5em 0 0; color: rgb(var(--gray)); }
-  .date a { color: inherit; }
-  .title a:hover, .date a:hover { color: var(--accent); }
+  .post-row { position: relative; display: flex; flex-direction: column; height: 100%; padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(145deg, #17202999, #11171e88); transition: border-color .25s ease, background .25s ease, transform .25s ease; }
+  .post-row:hover { border-color: #9ce5c54a; background: linear-gradient(145deg, #1a2a2d, #121b23); transform: translateY(-3px); }
+  .entry-top { display: flex; align-items: center; justify-content: space-between; color: var(--muted); font: 11px/1.5 var(--font-mono); margin-bottom: 27px; gap: 15px; }
+  .entry-number { color: #9ce5c5a8; }
+  .title { margin: 0 0 14px; font-size: 21px; line-height: 1.65; letter-spacing: -.02em; font-weight: 550; }
+  .title a { display: block; color: var(--ink); text-decoration: none; }
+  .title a::after { content: ''; position: absolute; inset: 0; border-radius: 16px; }
+  .title a:hover { color: var(--accent); }
+  .title a:focus-visible { outline: none; }
+  .post-row:focus-within { outline: 2px solid var(--accent); outline-offset: 4px; }
+  .description { color: var(--muted); font-size: 14px; line-height: 1.9; margin: 0 0 25px; }
+  .entry-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: auto; gap: 12px; }
+  .entry-tags { display: flex; flex-wrap: wrap; gap: 7px; }
+  .entry-tags span, .entry-tags a { position: relative; z-index: 1; font-size: 11px; color: var(--muted); background: #ffffff05; border: 1px solid #ffffff0c; border-radius: 5px; padding: 2px 7px; line-height: 1.7; text-decoration: none; }
+  .entry-tags a:hover { color: var(--accent); border-color: #9ce5c544; }
+  .entry-tags span { pointer-events: none; }
+  .entry-arrow { color: var(--muted); font-size: 20px; transition: transform .25s ease, color .25s ease; }
+  .post-row:hover .entry-arrow { transform: translate(2px,-2px); color: var(--accent); }
+  @media (max-width: 600px) { .post-row { padding: 23px; } .entry-top { margin-bottom: 19px; } .title { font-size: 20px; } }
+  @media (prefers-reduced-motion: reduce) { .post-row, .entry-arrow { transition: none; } .post-row:hover, .post-row:hover .entry-arrow { transform: none; } }
 </style>

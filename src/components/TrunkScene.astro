@@ -1,0 +1,273 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { postPath } from '../lib/posts';
+
+interface Props { posts: CollectionEntry<'posts'>[]; }
+const { posts } = Astro.props;
+const notes = posts.slice(0, 3);
+---
+
+<div class="trunk-scene" data-trunk-scene data-open="false" data-paused="false">
+  <canvas class="stardust" aria-hidden="true"></canvas>
+  <div class="scene-halo" aria-hidden="true"></div>
+  <div class="orbit orbit-one" aria-hidden="true"></div>
+  <div class="orbit orbit-two" aria-hidden="true"></div>
+
+  <button class="trunk-toggle" type="button" data-trunk-toggle aria-controls="trunk-notes" aria-expanded="false" hidden>
+    <svg width="17" height="17" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h16v11H4zM3 5h18v4H3zM9 13h6" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg>
+    <span data-toggle-label>打开后备箱</span>
+    <span class="toggle-mark" aria-hidden="true">+</span>
+  </button>
+
+  <div class="scene-stage">
+    <div class="trunk-pivot">
+      <div class="trunk-shadow" aria-hidden="true"></div>
+      <div class="trunk-back" aria-hidden="true"></div>
+      <div class="trunk-lid" aria-hidden="true">
+        <span>DAVE'S TRUNK</span><i></i>
+      </div>
+
+      <div class="trunk-contents" id="trunk-notes" inert aria-hidden="true">
+        {notes.map((post, index) => <a class="note" href={postPath(post)} title={post.data.title}>
+          <span class="note-top"><span class="note-number">0{index + 1}</span><svg width="15" height="15" viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 17 17 7M7 7h10v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" /></svg></span>
+          <span class="note-title">{post.data.title}</span>
+          <span class="note-lines" aria-hidden="true"><i></i><i></i></span>
+        </a>)}
+      </div>
+
+      <div class="trunk-body" aria-hidden="true">
+        <div class="trunk-edge"></div>
+        <div class="trunk-face">
+          <span class="trunk-monogram">D<span>↗</span></span>
+          <div class="trunk-name">想法，总有去处。</div>
+          <span class="trunk-latch"><i></i></span>
+        </div>
+        <div class="trunk-base"><span></span><span></span></div>
+      </div>
+    </div>
+  </div>
+
+  <button class="motion-toggle" type="button" data-motion-toggle aria-pressed="false" aria-label="暂停动效" title="暂停动效" hidden>
+    <svg class="pause-icon" width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="M7 5v10M13 5v10" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" /></svg>
+    <svg class="play-icon" width="14" height="14" viewBox="0 0 20 20" fill="none" aria-hidden="true"><path d="m7 5 8 5-8 5V5Z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round" /></svg>
+  </button>
+</div>
+
+<style>
+  .trunk-scene {
+    --scene-mint: #9ce5c5;
+    --tilt-x: 0deg;
+    --tilt-y: 0deg;
+    position: relative;
+    width: 100%;
+    height: 430px;
+    min-width: 0;
+    overflow: clip;
+    isolation: isolate;
+    user-select: none;
+  }
+  .stardust { position: absolute; inset: 0; width: 100%; height: 100%; z-index: -1; pointer-events: none; }
+  .scene-halo { position: absolute; width: 330px; height: 270px; left: 50%; top: 44%; transform: translate(-50%, -50%); border-radius: 50%; background: radial-gradient(ellipse, rgba(104, 175, 153, .14), rgba(104, 175, 153, .025) 52%, transparent 72%); filter: blur(16px); pointer-events: none; }
+  .orbit { position: absolute; left: 50%; top: 46%; border: 1px solid rgba(158, 202, 193, .075); border-radius: 50%; pointer-events: none; }
+  .orbit-one { width: 365px; height: 365px; transform: translate(-50%, -50%) rotate(-27deg) scaleY(.64); }
+  .orbit-two { width: 420px; height: 420px; transform: translate(-50%, -50%) rotate(32deg) scaleY(.66); border-style: dashed; border-color: rgba(158, 202, 193, .045); }
+  .scene-stage { position: absolute; inset: 0; perspective: 900px; }
+  .trunk-pivot { position: absolute; width: 320px; height: 240px; left: 50%; top: 51%; transform: translate(-50%, -50%) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) rotateZ(-6deg); transform-style: preserve-3d; transition: transform .5s cubic-bezier(.2, .8, .2, 1); }
+  .trunk-shadow { position: absolute; width: 270px; height: 44px; left: 32px; bottom: -20px; background: rgba(0, 0, 0, .45); border-radius: 50%; filter: blur(19px); transform: rotate(6deg); pointer-events: none; }
+  .trunk-back { position: absolute; left: 9px; top: 68px; width: calc(100% - 18px); height: 138px; border-radius: 21px; background: linear-gradient(165deg, rgba(145, 190, 174, .13), rgba(19, 31, 33, .86)); border: 1px solid rgba(185, 226, 213, .16); box-shadow: inset 0 1px 0 rgba(220, 250, 239, .05); pointer-events: none; }
+  .trunk-lid { position: absolute; z-index: 3; left: 0; top: 57px; width: 100%; height: 83px; display: flex; align-items: center; justify-content: space-between; padding: 0 24px; box-sizing: border-box; border: 1px solid rgba(190, 224, 214, .22); border-radius: 19px 19px 10px 10px; background: linear-gradient(155deg, rgba(65, 88, 84, .68), rgba(19, 31, 33, .94) 76%); box-shadow: inset 0 1px 0 rgba(236, 255, 248, .16), 0 -10px 35px rgba(97, 184, 155, .025); transform-origin: 50% 100%; transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .5s ease; pointer-events: none; }
+  .trunk-lid::after { content: ''; position: absolute; height: 1px; left: 21px; right: 21px; bottom: 14px; background: linear-gradient(90deg, transparent, rgba(189, 232, 218, .14), transparent); }
+  .trunk-lid > span { font: 10px/1 Consolas, monospace; color: #b1c8c0; letter-spacing: .19em; }
+  .trunk-lid > i { height: 5px; width: 5px; background: #b9e7d2; border-radius: 50%; box-shadow: 0 0 13px rgba(156, 229, 197, .45); }
+  .trunk-body { position: absolute; z-index: 6; left: 0; right: 0; top: 126px; height: 126px; border: 1px solid rgba(188, 221, 210, .19); border-radius: 9px 9px 21px 21px; background: linear-gradient(150deg, rgba(40, 60, 59, .92), rgba(17, 28, 31, .97) 65%); box-shadow: inset 0 1px 0 rgba(216, 247, 235, .1), 0 16px 42px rgba(0, 0, 0, .3); backdrop-filter: blur(14px); -webkit-backdrop-filter: blur(14px); pointer-events: none; }
+  .trunk-edge { position: absolute; top: 8px; left: 12px; right: 12px; height: 1px; background: linear-gradient(90deg, transparent, rgba(192, 228, 214, .17), transparent); }
+  .trunk-face { height: 100%; display: flex; align-items: center; gap: 14px; padding: 0 24px; box-sizing: border-box; }
+  .trunk-monogram { font: 500 36px/1 var(--font-atkinson, sans-serif); letter-spacing: -.08em; color: #e1efe8; }
+  .trunk-monogram > span { display: inline-block; margin-left: 1px; vertical-align: top; padding-top: 1px; font-size: 15px; color: var(--scene-mint); }
+  .trunk-name { color: #a5b9b0; font-size: 11px; letter-spacing: .05em; }
+  .trunk-latch { margin-left: auto; width: 17px; height: 27px; display: grid; place-items: center; border: 1px solid rgba(185, 222, 208, .17); border-radius: 5px; background: rgba(5, 14, 18, .32); box-shadow: inset 0 1px 3px rgba(0, 0, 0, .2); }
+  .trunk-latch > i { width: 2px; height: 9px; background: #9dcdb8; border-radius: 2px; }
+  .trunk-base { position: absolute; display: flex; justify-content: space-between; left: 30px; right: 30px; bottom: -5px; }
+  .trunk-base > span { width: 32px; height: 5px; border-radius: 0 0 3px 3px; background: #0b1519; border: 1px solid rgba(177, 216, 204, .1); }
+  .trunk-contents { position: absolute; z-index: 4; top: 69px; left: 9px; right: 9px; height: 155px; pointer-events: none; }
+  .note { position: absolute; width: 119px; height: 145px; padding: 13px 12px; box-sizing: border-box; border: 1px solid rgba(187, 220, 210, .22); border-radius: 10px; background: linear-gradient(145deg, #263b3b, #162b2d); color: #d6e8df; text-decoration: none; box-shadow: 0 5px 20px rgba(0, 0, 0, .22), inset 0 1px 0 rgba(215, 246, 234, .09); transform: translateY(43px) rotate(0deg) scale(.91); opacity: 0; visibility: hidden; transition: transform .6s cubic-bezier(.22, 1, .36, 1), opacity .35s ease, border-color .2s ease, visibility .35s; pointer-events: auto; }
+  .note:nth-child(1) { left: -7px; --note-angle: -13deg; --note-lift: -49px; transition-delay: 0s; }
+  .note:nth-child(2) { left: calc(50% - 59px); --note-angle: 2deg; --note-lift: -68px; background: linear-gradient(145deg, #35413a, #202f2a); transition-delay: .045s; }
+  .note:nth-child(3) { right: -7px; --note-angle: 14deg; --note-lift: -41px; background: linear-gradient(145deg, #393b34, #262e29); transition-delay: .09s; }
+  .note-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; color: #a9c8b9; }
+  .note-number { font: 10px/1 Consolas, monospace; letter-spacing: .05em; }
+  .note-title { display: -webkit-box; -webkit-box-orient: vertical; -webkit-line-clamp: 3; overflow: hidden; font-size: 11px; line-height: 1.6; letter-spacing: .01em; }
+  .note-lines { display: grid; gap: 5px; margin-top: 12px; }
+  .note-lines > i { width: 76%; height: 2px; background: rgba(177, 217, 198, .12); border-radius: 3px; }
+  .note-lines > i:last-child { width: 47%; }
+  .note:hover, .note:focus-visible { z-index: 10; border-color: rgba(156, 229, 197, .65); color: #f0f8f3; }
+  .note:focus-visible { outline: 2px solid var(--scene-mint); outline-offset: 3px; }
+  [data-open='true'] .trunk-lid { transform: translateY(-83px) rotate(-9deg); opacity: .66; }
+  [data-open='true'] .note { transform: translateY(var(--note-lift)) rotate(var(--note-angle)); opacity: 1; visibility: visible; }
+  .trunk-toggle { position: absolute; z-index: 8; bottom: 14px; left: 50%; transform: translateX(-50%); min-height: 44px; min-width: 166px; display: flex; justify-content: center; align-items: center; gap: 10px; padding: 9px 14px; border: 1px solid rgba(176, 213, 200, .18); border-radius: 30px; background: rgba(25, 41, 42, .66); backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px); color: #bfd3c9; font: inherit; font-size: 12px; cursor: pointer; transition: border-color .2s ease, color .2s ease, background .2s ease; }
+  .trunk-toggle:hover { color: #eff8f3; border-color: rgba(156, 229, 197, .42); background: rgba(33, 54, 52, .85); }
+  .toggle-mark { margin-left: 2px; font-size: 18px; font-weight: 300; line-height: 1; transition: transform .3s ease; }
+  [data-open='true'] .toggle-mark { transform: rotate(45deg); }
+  .motion-toggle { position: absolute; z-index: 8; bottom: 14px; right: 11px; min-width: 44px; min-height: 44px; display: grid; place-items: center; padding: 0; border: 1px solid rgba(177, 208, 198, .1); border-radius: 50%; background: rgba(17, 29, 32, .5); color: #9aafa6; cursor: pointer; }
+  .motion-toggle:hover { color: #e6f4ec; border-color: rgba(177, 208, 198, .3); }
+  .play-icon { display: none; }
+  [data-paused='true'] .pause-icon { display: none; }
+  [data-paused='true'] .play-icon { display: block; }
+  .trunk-toggle:focus-visible, .motion-toggle:focus-visible { outline: 2px solid var(--scene-mint); outline-offset: 4px; }
+  .trunk-toggle[hidden], .motion-toggle[hidden] { display: none; }
+  @media (max-width: 560px) {
+    .trunk-scene { height: 370px; }
+    .trunk-pivot { width: 286px; top: 46%; transform: translate(-50%, -50%) rotateZ(-5deg) scale(.95); }
+    .orbit-one { width: 315px; height: 315px; top: 42%; }
+    .orbit-two { width: min(360px, 105%); height: 330px; top: 42%; }
+    .trunk-name { font-size: 10px; }
+    .trunk-face { padding-inline: 21px; gap: 12px; }
+    .note { width: 109px; padding: 12px 10px; }
+    .note:nth-child(1) { left: -5px; }
+    .note:nth-child(2) { left: calc(50% - 54px); }
+    .note:nth-child(3) { right: -5px; }
+    .motion-toggle { right: 2px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .trunk-pivot, .trunk-lid, .note, .toggle-mark, .trunk-toggle { transition: none; }
+  }
+</style>
+
+<script>
+  document.querySelectorAll<HTMLElement>('[data-trunk-scene]').forEach((scene) => {
+    if (scene.dataset.ready === 'true') return;
+    scene.dataset.ready = 'true';
+    const trigger = scene.querySelector<HTMLButtonElement>('[data-trunk-toggle]');
+    const label = scene.querySelector<HTMLElement>('[data-toggle-label]');
+    const contents = scene.querySelector<HTMLElement>('.trunk-contents');
+    const motion = scene.querySelector<HTMLButtonElement>('[data-motion-toggle]');
+    const canvas = scene.querySelector<HTMLCanvasElement>('canvas');
+    const context = canvas?.getContext('2d');
+    const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
+    const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
+    let opened = false;
+    let paused = false;
+    let visible = false;
+    let frame = 0;
+    let width = 0;
+    let height = 0;
+    let lastDraw = 0;
+    let pointerBounds: DOMRect | null = null;
+    const stars = Array.from({ length: 34 }, (_, index) => ({
+      x: ((index * 73 + 19) % 100) / 100,
+      y: ((index * 47 + 11) % 87) / 100,
+      phase: index * 2.399,
+      radius: index % 7 === 0 ? 1.3 : .65,
+      warm: index % 9 === 0,
+    }));
+
+    if (trigger && contents?.querySelector('a')) {
+      trigger.hidden = false;
+      trigger.addEventListener('click', () => {
+        opened = !opened;
+        scene.dataset.open = String(opened);
+        trigger.setAttribute('aria-expanded', String(opened));
+        contents.inert = !opened;
+        contents.setAttribute('aria-hidden', String(!opened));
+        if (label) label.textContent = opened ? '合上后备箱' : '打开后备箱';
+      });
+      scene.addEventListener('keydown', (event) => {
+        if (event.key !== 'Escape' || !opened) return;
+        trigger.click();
+        trigger.focus();
+      });
+    }
+
+    function draw(time: number) {
+      if (!context || !canvas || width === 0 || height === 0) return;
+      context.clearRect(0, 0, width, height);
+      stars.forEach((star) => {
+        const x = star.x * width + Math.sin(time * .00012 + star.phase) * 7;
+        const y = star.y * height + Math.cos(time * .0001 + star.phase) * 10;
+        const alpha = .2 + (Math.sin(time * .00035 + star.phase) + 1) * .12;
+        context.beginPath();
+        context.arc(x, y, star.radius, 0, Math.PI * 2);
+        context.fillStyle = star.warm ? `rgba(210, 180, 129, ${alpha})` : `rgba(164, 209, 193, ${alpha})`;
+        context.fill();
+      });
+    }
+
+    function shouldAnimate() { return visible && !document.hidden && !paused && !reduced.matches; }
+    function tick(time: number) {
+      frame = 0;
+      if (!shouldAnimate()) return;
+      if (time - lastDraw > 32) { draw(time); lastDraw = time; }
+      frame = requestAnimationFrame(tick);
+    }
+    function resetTilt() {
+      scene.style.setProperty('--tilt-x', '0deg');
+      scene.style.setProperty('--tilt-y', '0deg');
+    }
+    function updateMotion() {
+      if (motion) motion.hidden = reduced.matches;
+      if (shouldAnimate()) {
+        if (!frame) frame = requestAnimationFrame(tick);
+      } else {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        draw(lastDraw);
+        resetTilt();
+      }
+    }
+
+    if (canvas && context) {
+      const resize = new ResizeObserver(([entry]) => {
+        width = entry.contentRect.width;
+        height = entry.contentRect.height;
+        const dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(width * dpr);
+        canvas.height = Math.round(height * dpr);
+        context.setTransform(dpr, 0, 0, dpr, 0, 0);
+        pointerBounds = null;
+        draw(lastDraw);
+      });
+      resize.observe(scene);
+      const intersection = new IntersectionObserver(([entry]) => { visible = entry.isIntersecting; updateMotion(); }, { threshold: .05 });
+      intersection.observe(scene);
+      if (motion) {
+        scene.dataset.paused = String(paused);
+        motion.hidden = reduced.matches;
+        motion.setAttribute('aria-pressed', String(paused));
+        motion.setAttribute('aria-label', paused ? '开启动效' : '暂停动效');
+        motion.title = paused ? '开启动效' : '暂停动效';
+        motion.addEventListener('click', () => {
+          paused = !paused;
+          scene.dataset.paused = String(paused);
+          motion.setAttribute('aria-pressed', String(paused));
+          motion.setAttribute('aria-label', paused ? '开启动效' : '暂停动效');
+          motion.title = paused ? '开启动效' : '暂停动效';
+          updateMotion();
+        });
+      }
+      document.addEventListener('visibilitychange', updateMotion);
+      reduced.addEventListener('change', updateMotion);
+      window.addEventListener('pagehide', () => {
+        if (frame) cancelAnimationFrame(frame);
+        frame = 0;
+        resize.disconnect();
+        intersection.disconnect();
+      });
+      window.addEventListener('pageshow', (event) => {
+        if (!event.persisted) return;
+        resize.observe(scene);
+        intersection.observe(scene);
+        updateMotion();
+      });
+    }
+
+    scene.addEventListener('pointerenter', () => { pointerBounds = scene.getBoundingClientRect(); });
+    scene.addEventListener('pointermove', (event) => {
+      if (paused || reduced.matches || !finePointer.matches || !pointerBounds) return;
+      const x = Math.max(-.5, Math.min(.5, (event.clientX - pointerBounds.left) / pointerBounds.width - .5));
+      const y = Math.max(-.5, Math.min(.5, (event.clientY - pointerBounds.top) / pointerBounds.height - .5));
+      scene.style.setProperty('--tilt-x', `${-y * 7}deg`);
+      scene.style.setProperty('--tilt-y', `${x * 9}deg`);
+    });
+    scene.addEventListener('pointerleave', () => { pointerBounds = null; resetTilt(); });
+  });
+</script>

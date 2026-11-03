@@ -2,11 +2,13 @@
 
 ## Astro Blog Starter
 
-The base components, typography and local font configuration are adapted from [withastro/astro, examples/blog](https://github.com/withastro/astro/tree/main/examples/blog), retrieved on 2026-11-03.
+The content/layout foundation and local font configuration derive from [withastro/astro, examples/blog](https://github.com/withastro/astro/tree/main/examples/blog), retrieved on 2026-11-03. The current dark visual design, component styling and interactive trunk are project-specific adaptations; the site no longer presents the upstream starter stylesheet as an unmodified theme.
 
 Astro is distributed under the MIT License. Copyright (c) 2021 Fred K. Schott. The complete upstream notice is preserved in [licenses/astro.txt](licenses/astro.txt).
 
-The upstream `global.css` credits [Bear Blog's default CSS](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css). The [MIT license at that source commit](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/LICENSE.md) is preserved in [licenses/bearblog.txt](licenses/bearblog.txt). Its source comment is retained in the reused stylesheet.
+The earlier upstream `global.css` credited [Bear Blog's default CSS](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css). The [MIT license at that source commit](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/LICENSE.md) remains preserved in [licenses/bearblog.txt](licenses/bearblog.txt) as part of the project's source attribution history; the current stylesheet has been redesigned.
+
+The personal sites listed in [the design direction](docs/design-direction.md) are visual research references only. Their code, imagery, fonts, content and personal/project data are not included as site assets.
 
 ## Atkinson Hyperlegible
 

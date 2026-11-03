@@ -3,9 +3,12 @@ import { SITE } from '../config';
 import { url } from '../lib/posts';
 import HeaderLink from './HeaderLink.astro';
 ---
-<header>
+<header class="site-header">
   <nav aria-label="主导航">
-    <h2><a href={url()}>{SITE.title}</a></h2>
+    <a class="brand" href={url()}>
+      <span class="brand-mark" aria-hidden="true">D<span></span></span>
+      <span class="brand-title">{SITE.title}</span>
+    </a>
     <div class="internal-links">
       <HeaderLink href={url()}>首页</HeaderLink>
       <HeaderLink href={url('posts/')}>文章</HeaderLink>
@@ -13,85 +16,29 @@ import HeaderLink from './HeaderLink.astro';
       <HeaderLink href={url('archives/')}>归档</HeaderLink>
       <HeaderLink href={url('about/')}>关于</HeaderLink>
     </div>
-    <div class="social-links">
-      <a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="戴夫（Dave）的 GitHub（新窗口打开）" title="戴夫（Dave） · GitHub">
-        <svg viewBox="0 0 16 16" aria-hidden="true" width="32" height="32" focusable="false">
-          <path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" />
-        </svg>
-      </a>
-    </div>
+    <a class="github-link" href={SITE.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="戴夫（Dave）的 GitHub（新窗口打开）" title="戴夫（Dave） · GitHub">
+      <svg viewBox="0 0 16 16" aria-hidden="true" width="22" height="22" focusable="false"><path fill="currentColor" d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.012 8.012 0 0 0 16 8c0-4.42-3.58-8-8-8z" /></svg>
+    </a>
   </nav>
 </header>
 <style>
-  header {
-    margin: 0;
-    padding: 0 1em;
-    background: white;
-    box-shadow: 0 2px 8px rgba(var(--black), 5%);
-  }
-  h2 {
-    margin: 0;
-    font-size: 1em;
-  }
-  h2 a,
-  h2 a.active {
-    text-decoration: none;
-  }
-  nav {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 1em;
-  }
-  nav a {
-    padding: 1em 0.5em;
-    color: rgb(var(--black));
-    border-bottom: 4px solid transparent;
-    text-decoration: none;
-  }
-  nav a.active {
-    text-decoration: none;
-    border-bottom-color: var(--accent);
-  }
-  .internal-links {
-    display: flex;
-    flex-shrink: 0;
-  }
-  .social-links,
-  .social-links a {
-    display: flex;
-  }
-  .social-links {
-    flex-shrink: 0;
-  }
-  .social-links a {
-    min-width: 44px;
-    min-height: 44px;
-    padding: 0;
-    align-items: center;
-    justify-content: center;
-  }
-  @media (max-width: 900px) {
-    nav {
-      flex-wrap: wrap;
-      gap: 0;
-    }
-    h2 {
-      flex: 1;
-      order: 1;
-    }
-    h2 a {
-      display: inline-block;
-      padding-inline: 0;
-    }
-    .internal-links {
-      order: 3;
-      width: 100%;
-      justify-content: center;
-      flex-wrap: wrap;
-    }
-    .social-links {
-      order: 2;
-    }
+  .site-header { position: sticky; top: 16px; z-index: 30; width: min(1120px, calc(100% - 32px)); margin: 16px auto 0; border: 1px solid rgba(218, 235, 248, .11); border-radius: 16px; background: rgba(17, 24, 32, .78); backdrop-filter: blur(22px) saturate(130%); -webkit-backdrop-filter: blur(22px) saturate(130%); box-shadow: 0 8px 32px rgba(0, 0, 0, .12), inset 0 1px rgba(255, 255, 255, .035); }
+  nav { display: flex; align-items: center; justify-content: space-between; gap: 20px; padding: 9px 14px 9px 16px; }
+  .brand { display: inline-flex; align-items: center; gap: 11px; min-width: 0; color: var(--ink); text-decoration: none; }
+  .brand-mark { position: relative; display: grid; place-items: center; width: 34px; height: 34px; flex: 0 0 34px; border: 1px solid rgba(156, 229, 197, .24); border-radius: 10px; background: linear-gradient(150deg, rgba(156, 229, 197, .1), rgba(156, 229, 197, .015)); color: var(--accent); font-size: 22px; font-weight: 700; line-height: 1; }
+  .brand-mark span { position: absolute; width: 3px; height: 3px; right: 5px; bottom: 5px; background: var(--accent); border-radius: 50%; }
+  .brand-title { font-size: 16px; font-weight: 600; letter-spacing: -.02em; white-space: nowrap; }
+  .internal-links { display: flex; align-items: center; gap: 4px; }
+  .github-link { display: grid; place-items: center; flex: 0 0 44px; width: 44px; height: 44px; border: 1px solid transparent; border-radius: 10px; color: #a9b5c1; transition: color .25s ease, background .25s ease, border-color .25s ease; }
+  .github-link:hover { color: var(--ink); background: rgba(218, 235, 248, .05); border-color: rgba(218, 235, 248, .08); }
+  @supports not (backdrop-filter: blur(1px)) { .site-header { background: #111820; } }
+  @media (max-width: 840px) {
+    .site-header { top: 10px; margin-top: 10px; }
+    nav { flex-wrap: wrap; gap: 4px 12px; padding: 8px 12px; }
+    .brand { order: 1; flex: 1; }
+    .brand-title { font-size: 15px; }
+    .brand-mark { width: 30px; height: 30px; flex-basis: 30px; font-size: 20px; }
+    .github-link { order: 2; }
+    .internal-links { order: 3; width: 100%; justify-content: center; padding-top: 3px; border-top: 1px solid rgba(218, 235, 248, .06); }
   }
 </style>
