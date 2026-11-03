@@ -19,7 +19,7 @@
 </style>
 
 <script>
-  type Point = { x: number; y: number; alpha: number; radius: number };
+  type Point = { x: number; y: number; alpha: number; radius: number; proximity: number; distance: number };
   const cleanups = new Set<() => void>();
 
   function initializeBackdrops() {
@@ -50,6 +50,28 @@
       let pointerY = 0;
       let targetX = 0;
       let targetY = 0;
+      let cursorX = 0;
+      let cursorY = 0;
+      let cursorTargetX = 0;
+      let cursorTargetY = 0;
+      let interaction = 0;
+      let targetInteraction = 0;
+
+      function readingFade(x: number) {
+        const edgeDistance = Math.abs(x / width - .5) * 2;
+        return .11 + .89 * Math.pow(Math.min(1, edgeDistance), 2.3);
+      }
+
+      function resetPointer(immediate = false) {
+        targetX = 0;
+        targetY = 0;
+        targetInteraction = 0;
+        if (immediate) {
+          pointerX = 0;
+          pointerY = 0;
+          interaction = 0;
+        }
+      }
 
       // Each row follows the same folded surface. Connections stay local;
       // there is no random star field or quadratic neighbour search.
@@ -64,15 +86,27 @@
           : width * (.045 + .12 * Math.sin(bend + 1.4));
         const centerY = height * (-.2 + 1.43 * u + band * .13);
         const spread = width * (mobile ? .24 : .16);
-        const x = centerX + v * spread * Math.cos(twist) + pointerX * (right ? 11 : -7);
-        const y = centerY + v * height * .12 * Math.sin(twist) + Math.sin(bend * 1.7) * height * .035 + pointerY * 8;
-        const edgeDistance = Math.abs(x / width - .5) * 2;
-        const centerFade = .11 + .89 * Math.pow(Math.min(1, edgeDistance), 2.3);
+        const baseX = centerX + v * spread * Math.cos(twist);
+        const baseY = centerY + v * height * .12 * Math.sin(twist) + Math.sin(bend * 1.7) * height * .035;
+        // The unshifted surface owns the reading mask: interaction cannot bring
+        // a bright edge particle into the central reading area.
+        const centerFade = readingFade(baseX);
+        let x = baseX + (mobile ? 0 : pointerX * (right ? 22 : -18));
+        let y = baseY + (mobile ? 0 : pointerY * 18);
+        const dx = x - cursorX;
+        const dy = y - cursorY;
+        const distance = Math.hypot(dx, dy);
+        const proximity = mobile ? 0 : Math.max(0, 1 - distance / 180) ** 2 * interaction;
+        if (distance > .01 && proximity > 0) {
+          const displacement = 16 * proximity * centerFade;
+          x += dx / distance * displacement;
+          y += dy / distance * displacement;
+        }
         const ends = Math.sin(Math.PI * u) ** .5;
         const depth = .68 + .32 * Math.cos(twist + v * .5);
         const pulse = .85 + .15 * Math.sin(u * 13 + v * 2 - phase * 3);
-        const alpha = centerFade * ends * depth * pulse * (right ? .64 : .37);
-        return { x, y, alpha, radius: (.72 + depth * .5) * (mobile ? .9 : 1) };
+        const alpha = Math.min(.95, centerFade * ends * depth * pulse * (right ? .88 : .56) * (1 + proximity * .8));
+        return { x, y, alpha, radius: (.83 + depth * .62 + proximity * .45) * (mobile ? .9 : 1), proximity, distance };
       }
 
       function draw(time: number) {
@@ -82,10 +116,14 @@
         const columns = mobile ? 26 : 43;
         const rows = mobile ? 6 : 8;
         backdrop.dataset.particles = String(columns * rows * 2);
+        backdrop.dataset.pointerActive = String(!mobile && finePointer.matches && interaction > .05);
+        backdrop.style.setProperty('--pointer-x', `${Math.round(cursorX)}px`);
+        backdrop.style.setProperty('--pointer-y', `${Math.round(cursorY)}px`);
 
         for (let band = 0; band < 2; band++) {
           const color = band === 0 ? '144, 209, 218' : '156, 229, 197';
           const points: Point[][] = [];
+          const nearby: Point[] = [];
           for (let row = 0; row < rows; row++) {
             const v = (row / (rows - 1) - .5) * 2;
             const line: Point[] = [];
@@ -95,7 +133,7 @@
             points.push(line);
           }
 
-          context!.lineWidth = .65;
+          context!.lineWidth = .75;
           for (let row = 0; row < rows; row++) {
             for (let col = 0; col < columns; col++) {
               const point = points[row][col];
@@ -104,7 +142,7 @@
                 context!.beginPath();
                 context!.moveTo(previousPoint.x, previousPoint.y);
                 context!.lineTo(point.x, point.y);
-                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, previousPoint.alpha) * .26})`;
+                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, previousPoint.alpha) * .3})`;
                 context!.stroke();
               }
               // Sparse cross-lines reveal a mesh without turning the background into a grid.
@@ -113,13 +151,37 @@
                 context!.beginPath();
                 context!.moveTo(across.x, across.y);
                 context!.lineTo(point.x, point.y);
-                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, across.alpha) * .14})`;
+                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, across.alpha) * .18})`;
                 context!.stroke();
+              }
+              if (point.proximity > .12 && point.alpha > .15) {
+                context!.beginPath();
+                context!.arc(point.x, point.y, point.radius * 3.2, 0, Math.PI * 2);
+                context!.fillStyle = `rgba(${color},${point.alpha * point.proximity * .1})`;
+                context!.fill();
+                // Retain only the two nearest eligible nodes in each ribbon.
+                // Four short cursor links at most; never a network of all pairs.
+                if (point.distance < 145) {
+                  const slot = nearby.findIndex((candidate) => point.distance < candidate.distance);
+                  if (slot === -1) nearby.push(point);
+                  else nearby.splice(slot, 0, point);
+                  if (nearby.length > 2) nearby.pop();
+                }
               }
               context!.beginPath();
               context!.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
               context!.fillStyle = `rgba(${color},${point.alpha})`;
               context!.fill();
+            }
+          }
+          const cursorFade = readingFade(cursorX);
+          if (!mobile && cursorFade > .3 && interaction > .05) {
+            for (const point of nearby) {
+              context!.beginPath();
+              context!.moveTo(cursorX, cursorY);
+              context!.lineTo(point.x, point.y);
+              context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, cursorFade) * point.proximity * .32})`;
+              context!.stroke();
             }
           }
         }
@@ -132,8 +194,11 @@
         if (previous) elapsed += Math.min(now - previous, 80);
         previous = now;
         if (now - lastDraw >= 1000 / 24) {
-          pointerX += (targetX - pointerX) * .08;
-          pointerY += (targetY - pointerY) * .08;
+          pointerX += (targetX - pointerX) * .1;
+          pointerY += (targetY - pointerY) * .1;
+          cursorX += (cursorTargetX - cursorX) * .18;
+          cursorY += (cursorTargetY - cursorY) * .18;
+          interaction += (targetInteraction - interaction) * .14;
           draw(elapsed);
           lastDraw = now;
         }
@@ -141,6 +206,8 @@
       }
       function updateMotion() {
         paused = preference ?? reduced.matches;
+        if (document.hidden) resetPointer(true);
+        else if (paused) resetPointer();
         backdrop.dataset.paused = String(paused);
         backdrop.dataset.running = String(shouldAnimate());
         if (toggle) {
@@ -170,14 +237,23 @@
         if (typeof detail?.paused === 'boolean') setPaused(detail.paused);
       }
       function onPointerMove(event: PointerEvent) {
-        if (!shouldAnimate() || !finePointer.matches) return;
+        if (!shouldAnimate() || !finePointer.matches || width < 700 || event.pointerType === 'touch') return;
         targetX = event.clientX / width - .5;
         targetY = event.clientY / height - .5;
+        cursorTargetX = event.clientX;
+        cursorTargetY = event.clientY;
+        if (targetInteraction === 0 && interaction < .05) {
+          cursorX = cursorTargetX;
+          cursorY = cursorTargetY;
+        }
+        targetInteraction = 1;
       }
-      function onPointerLeave() { targetX = 0; targetY = 0; }
+      function onPointerLeave() { resetPointer(); }
+      function onPointerModeChange() { if (!finePointer.matches) resetPointer(true); }
       function resize() {
         width = backdrop.clientWidth;
         height = backdrop.clientHeight;
+        if (width < 700) resetPointer(true);
         const dpr = Math.min(devicePixelRatio || 1, width < 700 ? 1.5 : 2);
         canvas!.width = Math.round(width * dpr);
         canvas!.height = Math.round(height * dpr);
@@ -191,7 +267,9 @@
       document.addEventListener('particle-motion-change', onExternalMotion);
       document.addEventListener('visibilitychange', updateMotion);
       reduced.addEventListener('change', updateMotion);
+      finePointer.addEventListener('change', onPointerModeChange);
       window.addEventListener('pointermove', onPointerMove, { passive: true });
+      window.addEventListener('blur', onPointerLeave);
       document.documentElement.addEventListener('pointerleave', onPointerLeave);
       resize();
       updateMotion();
@@ -203,7 +281,9 @@
         document.removeEventListener('particle-motion-change', onExternalMotion);
         document.removeEventListener('visibilitychange', updateMotion);
         reduced.removeEventListener('change', updateMotion);
+        finePointer.removeEventListener('change', onPointerModeChange);
         window.removeEventListener('pointermove', onPointerMove);
+        window.removeEventListener('blur', onPointerLeave);
         document.documentElement.removeEventListener('pointerleave', onPointerLeave);
         delete backdrop.dataset.ready;
         cleanups.delete(cleanup);
