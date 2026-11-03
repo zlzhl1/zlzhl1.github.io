@@ -33,8 +33,13 @@
       const toggle = document.querySelector<HTMLButtonElement>('[data-particle-toggle]');
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');
       const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-      let paused = false;
-      try { paused = localStorage.getItem('dave-particles-paused') === 'true'; } catch { /* Storage may be unavailable. */ }
+      // Follow the system by default; an explicit site preference takes priority.
+      let preference: boolean | null = null;
+      try {
+        const stored = localStorage.getItem('dave-particles-paused');
+        if (stored === 'true' || stored === 'false') preference = stored === 'true';
+      } catch { /* Storage may be unavailable. */ }
+      let paused = preference ?? reduced.matches;
       let width = 0;
       let height = 0;
       let frame = 0;
@@ -120,7 +125,7 @@
         }
       }
 
-      function shouldAnimate() { return !paused && !reduced.matches && !document.hidden; }
+      function shouldAnimate() { return !paused && !document.hidden; }
       function tick(now: number) {
         frame = 0;
         if (!shouldAnimate()) return;
@@ -135,10 +140,11 @@
         frame = requestAnimationFrame(tick);
       }
       function updateMotion() {
+        paused = preference ?? reduced.matches;
         backdrop.dataset.paused = String(paused);
         backdrop.dataset.running = String(shouldAnimate());
         if (toggle) {
-          toggle.hidden = reduced.matches;
+          toggle.hidden = false;
           toggle.setAttribute('aria-pressed', String(paused));
           const label = paused ? '开启背景动效' : '暂停背景动效';
           toggle.setAttribute('aria-label', label);
@@ -154,8 +160,8 @@
         }
       }
       function setPaused(value: boolean) {
-        paused = value;
-        try { localStorage.setItem('dave-particles-paused', String(paused)); } catch { /* Optional preference. */ }
+        preference = value;
+        try { localStorage.setItem('dave-particles-paused', String(value)); } catch { /* Optional preference. */ }
         updateMotion();
       }
       function onToggle() { setPaused(!paused); }

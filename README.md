@@ -96,7 +96,7 @@ npm.cmd run verify
 - 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
 - 全局设计变量与基础排版：`src/styles/global.css`；页面工具样式：`src/styles/site.css`；本地 Atkinson 字体：`src/assets/fonts/`。这些样式已重新设计，并非官方模板原样外观。
 - 首页文章列表：`src/pages/index.astro` 和 `src/components/PostRow.astro` 的 `journal` 样式，直接展示真实文章。
-- 粒子曲面背景：`src/components/ParticleBackdrop.astro`，图案由两条折叠曲面构成，中央淡化。支持导航栏暂停按钮、减少动态效果偏好及后台暂停；手机减少粒子数量。文章页进一步降低背景强度。
+- 粒子曲面背景：`src/components/ParticleBackdrop.astro`，图案由两条折叠曲面构成，中央淡化。导航栏可开启或暂停，默认跟随系统减少动态效果设置，用户主动选择优先并保存；后台暂停，手机减少粒子数量，文章页进一步降低背景强度。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
