@@ -1,17 +1,18 @@
 ---
 import type { CollectionEntry } from 'astro:content';
 import PostRow from './PostRow.astro';
-interface Props { posts: CollectionEntry<'posts'>[]; layout?: 'grid' | 'list'; }
+interface Props { posts: CollectionEntry<'posts'>[]; layout?: 'grid' | 'list' | 'journal'; }
 const { posts, layout = 'list' } = Astro.props;
 ---
 <ul class:list={['post-list', layout]}>
-  {posts.map((post, index) => <li data-article data-column={post.data.column?.id || ''} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} number={String(index + 1).padStart(2, '0')} /></li>)}
+  {posts.map((post, index) => <li data-article data-column={post.data.column?.id || ''} data-search={`${post.data.title} ${post.data.description} ${post.data.tags.join(' ')}`.toLocaleLowerCase()}><PostRow post={post} number={String(index + 1).padStart(2, '0')} variant={layout === 'journal' ? 'journal' : 'card'} /></li>)}
 </ul>
 <style>
   ul { display: grid; gap: 18px; list-style: none; margin: 0; padding: 0; }
   li { min-width: 0; }
   .grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
   .list { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .journal { grid-template-columns: minmax(0, 1fr); gap: 0; }
   @media (max-width: 900px) { .grid { grid-template-columns: 1fr; } }
   @media (max-width: 680px) { .list { grid-template-columns: 1fr; } }
 </style>

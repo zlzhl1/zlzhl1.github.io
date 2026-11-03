@@ -2,15 +2,25 @@
 import type { CollectionEntry } from 'astro:content';
 import FormattedDate from './FormattedDate.astro';
 import { getPostColumn, columnPath, postPath } from '../lib/posts';
-interface Props { post: CollectionEntry<'posts'>; number?: string; }
-const { post, number } = Astro.props;
+interface Props { post: CollectionEntry<'posts'>; number?: string; variant?: 'card' | 'journal'; }
+const { post, number, variant = 'card' } = Astro.props;
 const column = await getPostColumn(post);
 ---
-<article class="post-row">
+<article class:list={['post-row', { 'journal-row': variant === 'journal' }]}>
+  {variant === 'journal' ? <>
+    <time class="journal-date" datetime={post.data.date.toISOString()}>{post.data.date.toISOString().slice(0, 10).replaceAll('-', '.')}</time>
+    <div class="journal-main">
+      <h2 class="title"><a href={postPath(post)}>{post.data.title}</a></h2>
+      <p class="description">{post.data.description}</p>
+      <div class="entry-tags">{column ? <a href={columnPath(column)}>{column.data.title}</a> : post.data.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div>
+    </div>
+    <span class="entry-arrow" aria-hidden="true">↗</span>
+  </> : <>
   <div class="entry-top"><span class="entry-number">{number || '—'}</span><FormattedDate date={post.data.date} /></div>
   <h2 class="title"><a href={postPath(post)}>{post.data.title}</a></h2>
   <p class="description">{post.data.description}</p>
   <div class="entry-bottom"><div class="entry-tags">{column ? <a href={columnPath(column)}>{column.data.title}</a> : post.data.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div><span class="entry-arrow" aria-hidden="true">↗</span></div>
+  </>}
 </article>
 <style>
   .post-row { position: relative; display: flex; flex-direction: column; height: 100%; padding: 26px; border: 1px solid var(--line); border-radius: 16px; background: linear-gradient(145deg, #17202999, #11171e88); transition: border-color .25s ease, background .25s ease, transform .25s ease; }
@@ -32,5 +42,25 @@ const column = await getPostColumn(post);
   .entry-arrow { color: var(--muted); font-size: 20px; transition: transform .25s ease, color .25s ease; }
   .post-row:hover .entry-arrow { transform: translate(2px,-2px); color: var(--accent); }
   @media (max-width: 600px) { .post-row { padding: 23px; } .entry-top { margin-bottom: 19px; } .title { font-size: 20px; } }
+  .journal-row { display: grid; grid-template-columns: 100px minmax(0, 1fr) 24px; align-items: start; gap: 22px; padding: 25px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: rgba(11, 15, 20, .56); transition: background .25s ease; }
+  .journal-row:hover { transform: none; border-color: var(--line); background: linear-gradient(90deg, rgba(156, 229, 197, .045), rgba(11, 15, 20, .56)); }
+  .journal-date { padding-top: 8px; font: 11px/1.6 var(--font-mono); color: var(--muted); white-space: nowrap; }
+  .journal-main { min-width: 0; }
+  .journal-row .title { font-size: 21px; line-height: 1.6; margin-bottom: 7px; }
+  .journal-row .title a::after { border-radius: 0; }
+  .journal-row .description { margin: 0 0 12px; font-size: 13px; line-height: 1.8; }
+  .journal-row .entry-tags { gap: 0; }
+  .journal-row .entry-tags span, .journal-row .entry-tags a { padding: 0; border: 0; border-radius: 0; background: transparent; font-size: 11px; color: #8c9eac; }
+  .journal-row .entry-tags span + span::before { content: '/'; padding: 0 9px; color: #52616d; }
+  .journal-row .entry-tags a:hover { color: var(--accent); }
+  .journal-row > .entry-arrow { padding-top: 5px; font-size: 21px; }
+  @media (max-width: 720px) {
+    .journal-row { grid-template-columns: minmax(0, 1fr) 20px; gap: 7px 12px; padding: 20px 0; }
+    .journal-date { grid-column: 1 / -1; padding: 0; font-size: 11px; }
+    .journal-main { grid-row: 2; grid-column: 1; }
+    .journal-row .title { font-size: 18px; line-height: 1.65; margin-bottom: 7px; }
+    .journal-row .description { font-size: 13.5px; margin-bottom: 10px; }
+    .journal-row > .entry-arrow { grid-row: 2; grid-column: 2; padding-top: 2px; font-size: 19px; }
+  }
   @media (prefers-reduced-motion: reduce) { .post-row, .entry-arrow { transition: none; } .post-row:hover, .post-row:hover .entry-arrow { transform: none; } }
 </style>

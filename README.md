@@ -1,6 +1,6 @@
 # 戴夫（Dave）的后备箱
 
-使用 [Astro](https://github.com/withastro/astro) 与 Markdown 构建的个人博客，在官方 Blog Starter 的内容结构上采用原创深色设计：深墨色阅读界面、薄荷色强调、局部玻璃材质，以及可以展开文章的交互后备箱。文章和栏目由 GitHub 仓库管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。来源见 [模板记录](docs/astro-template.md)，视觉参考与验收要求见 [设计方向](docs/design-direction.md)。
+使用 [Astro](https://github.com/withastro/astro) 与 Markdown 构建的个人博客，采用深墨色阅读界面、薄荷色强调、玻璃导航和曲面粒子背景。首页直接展示文章。文章和栏目由 GitHub 仓库管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。来源见 [模板记录](docs/astro-template.md)，视觉参考与验收要求见 [设计方向](docs/design-direction.md)。
 
 ## 在 GitHub 管理内容
 
@@ -95,8 +95,8 @@ npm.cmd run verify
 
 - 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
 - 全局设计变量与基础排版：`src/styles/global.css`；页面工具样式：`src/styles/site.css`；本地 Atkinson 字体：`src/assets/fonts/`。这些样式已重新设计，并非官方模板原样外观。
-- 首页交互后备箱：`src/components/TrunkScene.astro`。仅展示真实文章；原先的 AI 背景图已停用。
-- 动效需支持暂停、减少动态效果偏好、离屏及后台暂停，并在手机上简化；具体验收记录见 [设计方向](docs/design-direction.md)。
+- 首页文章列表：`src/pages/index.astro` 和 `src/components/PostRow.astro` 的 `journal` 样式，直接展示真实文章。
+- 粒子曲面背景：`src/components/ParticleBackdrop.astro`，图案由两条折叠曲面构成，中央淡化。支持导航栏暂停按钮、减少动态效果偏好及后台暂停；手机减少粒子数量。文章页进一步降低背景强度。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
