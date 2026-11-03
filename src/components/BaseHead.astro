@@ -1,0 +1,35 @@
+---
+// Global styles and metadata follow the official Astro Blog Starter.
+import '../styles/global.css';
+import { Font } from 'astro:assets';
+import { SITE } from '../config';
+import { url } from '../lib/posts';
+
+interface Props {
+  title?: string;
+  description?: string;
+  article?: boolean;
+}
+
+const { title = SITE.title, description = SITE.description, article = false } = Astro.props;
+const canonicalURL = new URL(Astro.url.pathname, Astro.site || SITE.siteUrl);
+---
+
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<meta name="theme-color" content="#ffffff" />
+<link rel="icon" type="image/svg+xml" href={url('favicon.svg')} />
+<link rel="sitemap" href={url('sitemap.xml')} />
+<link rel="alternate" type="application/rss+xml" title={SITE.title} href={url('rss.xml')} />
+<meta name="generator" content={Astro.generator} />
+<Font cssVariable="--font-atkinson" preload />
+<link rel="canonical" href={canonicalURL} />
+<title>{title}</title>
+<meta name="description" content={description} />
+<meta property="og:type" content={article ? 'article' : 'website'} />
+<meta property="og:locale" content="zh_CN" />
+<meta property="og:url" content={canonicalURL} />
+<meta property="og:title" content={title} />
+<meta property="og:description" content={description} />
+<meta property="og:site_name" content={SITE.title} />
+<meta name="twitter:card" content="summary" />

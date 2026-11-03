@@ -1,0 +1,16 @@
+Atkinson Hyperlegible
+
+The unmodified files at src/assets/fonts/atkinson-regular.woff and
+src/assets/fonts/atkinson-bold.woff are copied from the Astro Blog Starter:
+https://github.com/withastro/astro/tree/main/examples/blog/src/assets/fonts
+
+The following notices are embedded in both WOFF files' name tables.
+
+Copyright notice (name ID 0):
+© 2020 Braille Institute of America, Inc., a 501(c)(3) Charitable Organization.
+
+License description (name ID 13):
+Braille Institute of America, Inc. provides Atkinson Hyperlegible for use, without derivatives or alteration, to the public free of charge for all non-commercial and commercial work. No attribution required.
+
+License information URL (name ID 14):
+https://www.BrailleInstitute.org/

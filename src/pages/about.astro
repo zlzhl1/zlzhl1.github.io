@@ -1,15 +1,13 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
-import Sidebar from '../components/Sidebar.astro';
 ---
 
 <BaseLayout title="关于我" description={`我是 ${SITE.author}，关注 AI 应用、Agent、知识库与办公自动化，记录实践与个人成长。`}>
-  <div class="container blog-layout">
+  <div>
     <section class="main-column">
       <header class="page-heading"><h1>关于我</h1></header>
       <div class="prose about-prose"><p>我是 {SITE.author}，在这里记录 AI 实践与个人成长。</p><p>关注 AI 应用、Agent、知识库、模型训练与办公自动化。</p><p><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">戴夫（Dave）的 GitHub</a></p></div>
     </section>
-    <Sidebar />
   </div>
 </BaseLayout>

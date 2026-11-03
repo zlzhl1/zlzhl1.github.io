@@ -1,5 +1,5 @@
 export const SITE = {
-  title: '戴夫（Dave）的 AI 手记',
+  title: '戴夫（Dave）的后备箱',
   description: '记录 Agent、知识库与自动化实践，把技术讲明白，也把工作想清楚。',
   author: '戴夫（Dave）',
   githubUrl: 'https://github.com/zlzhl1',

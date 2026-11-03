@@ -1,6 +1,6 @@
-# 戴夫（Dave）的 AI 手记
+# 戴夫（Dave）的后备箱
 
-使用官方 [withastro/astro](https://github.com/withastro/astro) 框架构建的个人博客。文章和栏目均由 Markdown 文件管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。
+以 [Astro 官方 Blog Starter](https://github.com/withastro/astro/tree/main/examples/blog) 为基础，复用它的页头、页脚、字体和基础排版。文章和栏目均由 Markdown 文件管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。模板来源及必要适配见 [模板记录](docs/astro-template.md)。
 
 ## 在 GitHub 管理内容
 
@@ -94,8 +94,8 @@ npm.cmd run verify
 ## 网站配置与部署
 
 - 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
-- 融合背景：`public/images/ai-unified-background.webp`；提示词见 [背景记录](docs/background-prompt.md)。
-- 页面样式：`src/styles/global.css` 与 `src/styles/themes.css`。
+- 官方模板基础样式：`src/styles/global.css`；本地 Atkinson 字体：`src/assets/fonts/`。
+- 当前页面采用官方模板的简洁排版，不加载原先的 AI 背景图。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
@@ -105,3 +105,4 @@ npm.cmd run verify
 - [Astro 内容集合](https://docs.astro.build/en/guides/content-collections/)
 - [Astro 中的 Markdown](https://docs.astro.build/en/guides/markdown-content/)
 - [部署到 GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)
+- [第三方许可](THIRD_PARTY_NOTICES.md)

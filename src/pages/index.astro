@@ -1,17 +1,10 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import Sidebar from '../components/Sidebar.astro';
-import PostRow from '../components/PostRow.astro';
-import { getPosts } from '../lib/posts';
-const posts = await getPosts();
+import { SITE } from '../config';
+import { url } from '../lib/posts';
 ---
 <BaseLayout>
-  <div class="container blog-layout">
-    <section class="main-column" aria-label="最新文章">
-      <h1 class="page-heading">最新文章</h1>
-      <div class="post-list">{posts.slice(0, 10).map((post) => <PostRow post={post} />)}</div>
-      {posts.length === 0 && <p class="empty-message">暂无文章。</p>}
-    </section>
-    <Sidebar />
-  </div>
+  <h1>{SITE.title}</h1>
+  <p>{SITE.description}</p>
+  <p><a href={url('posts/')}>浏览文章 →</a></p>
 </BaseLayout>

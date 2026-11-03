@@ -1,33 +1,13 @@
 ---
 import { render } from 'astro:content';
-import BaseLayout from '../../layouts/BaseLayout.astro';
-import { getPosts, getPostColumn, columnPath, formatDate, url } from '../../lib/posts';
+import BlogPost from '../../layouts/BlogPost.astro';
+import { getPosts, getPostColumn } from '../../lib/posts';
 export async function getStaticPaths() { return (await getPosts()).map((post) => ({ params: { slug: post.id }, props: { post } })); }
 const { post } = Astro.props;
-const { Content, headings } = await render(post);
+const { Content } = await render(post);
 const column = await getPostColumn(post);
-const toc = headings.filter((heading) => heading.depth === 2 || heading.depth === 3);
 ---
 
-<BaseLayout title={post.data.title} description={post.data.description} article>
-  <article class="container article-shell">
-    <header class="article-header"><h1>{post.data.title}</h1><div class="post-meta"><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time>{column && <a href={columnPath(column)}>{column.data.title}</a>}</div></header>
-    <div class="article-layout"><div class="article-main"><div class="prose"><Content /></div><p class="article-back"><a href={url('posts/')}>返回文章列表</a></p></div>{toc.length > 0 && <aside class="article-toc" aria-label="文章目录"><h2>目录</h2><nav>{toc.map((heading) => <a class:list={{ 'toc-sub': heading.depth === 3 }} href={`#${heading.slug}`}>{heading.text}</a>)}</nav></aside>}</div>
-  </article>
-</BaseLayout>
-
-<script>
-  document.querySelectorAll<HTMLPreElement>('.prose pre').forEach((pre) => {
-    const button = document.createElement('button');
-    button.type = 'button';
-    button.className = 'copy-code';
-    button.textContent = '复制';
-    button.setAttribute('aria-label', '复制这段代码');
-    button.addEventListener('click', async () => {
-      try { await navigator.clipboard.writeText(pre.querySelector('code')?.textContent || ''); button.textContent = '已复制'; }
-      catch { button.textContent = '请手动选择复制'; }
-      window.setTimeout(() => { button.textContent = '复制'; }, 2000);
-    });
-    pre.append(button);
-  });
-</script>
+<BlogPost title={post.data.title} description={post.data.description} date={post.data.date} column={column}>
+  <Content />
+</BlogPost>

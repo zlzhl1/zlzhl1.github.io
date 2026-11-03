@@ -1,8 +1,8 @@
-# 融合 AI 背景
+# 融合 AI 背景（历史记录，已停用）
 
 生成方式：Codex 内置 imagegen，2026-10-29。
 
-网站资产：`public/images/ai-unified-background.webp`。
+原始资产已归档至 `editorial/assets/ai-unified-background.webp`，不再随网站发布。
 
 ## 最终提示词
 

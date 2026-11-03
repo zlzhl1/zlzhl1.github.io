@@ -1,0 +1,17 @@
+# Third-party notices
+
+## Astro Blog Starter
+
+The base components, typography and local font configuration are adapted from [withastro/astro, examples/blog](https://github.com/withastro/astro/tree/main/examples/blog), retrieved on 2026-11-03.
+
+Astro is distributed under the MIT License. Copyright (c) 2021 Fred K. Schott. The complete upstream notice is preserved in [licenses/astro.txt](licenses/astro.txt).
+
+The upstream `global.css` credits [Bear Blog's default CSS](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/templates/styles/blog/default.css). The [MIT license at that source commit](https://github.com/HermanMartinus/bearblog/blob/297026a877bc2ab2b3bdfbd6b9f7961c350917dd/LICENSE.md) is preserved in [licenses/bearblog.txt](licenses/bearblog.txt). Its source comment is retained in the reused stylesheet.
+
+## Atkinson Hyperlegible
+
+`src/assets/fonts/atkinson-regular.woff` and `atkinson-bold.woff` are the unmodified local font files shipped with the Astro Blog Starter.
+
+Source: [Astro template font assets](https://github.com/withastro/astro/tree/main/examples/blog/src/assets/fonts).
+
+The actual template font binaries contain a 2020 Braille Institute of America, Inc. copyright notice and free-use terms for unmodified non-commercial and commercial use. These embedded notices are preserved in [licenses/atkinson.txt](licenses/atkinson.txt). The font files are included without alteration.

@@ -1,0 +1,40 @@
+/* Content utilities alongside the unmodified Astro Blog Starter global.css. */
+[hidden] { display: none !important; }
+html { scroll-padding-top: 24px; }
+button, input { font: inherit; }
+a, button, input { -webkit-tap-highlight-color: transparent; }
+button { cursor: pointer; }
+a:focus-visible, button:focus-visible, input:focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; }
+.skip-link { position: fixed; left: 1em; top: -5em; z-index: 10; padding: .5em 1em; background: white; }
+.skip-link:focus { top: .5em; }
+.page-heading { display: flex; align-items: baseline; gap: 1em; margin-bottom: 2em; }
+.page-heading h1 { margin: 0; }
+.page-count, .empty-message, .empty-state, .search-status { color: rgb(var(--gray)); }
+.page-count, .search-status { font-size: .8em; }
+.archive-toolbar { display: grid; gap: 1em; margin-bottom: 1em; }
+.filter-buttons { display: flex; flex-wrap: wrap; gap: .5em 1em; }
+.filter-button { border: 0; border-bottom: 2px solid transparent; background: transparent; padding: .25em 0; color: rgb(var(--gray-dark)); }
+.filter-button.active { border-bottom-color: var(--accent); color: var(--accent); }
+.search-field input { display: block; box-sizing: border-box; width: 100%; padding: .65em .8em; border: 1px solid rgb(var(--gray-light)); border-radius: 4px; background: white; }
+.empty-state { padding: 1em 0; }
+.empty-state p { margin-top: 0; }
+.column-list, .archive-list { list-style: none; padding: 0; }
+.column-list li { margin-bottom: 1.5em; }
+.column-list a { display: flex; align-items: baseline; justify-content: space-between; gap: 1em; text-decoration: none; color: rgb(var(--black)); }
+.column-list a:hover { color: var(--accent); }
+.column-list .count { font-size: .8em; color: rgb(var(--gray)); white-space: nowrap; }
+.column-list p { margin: .5em 0 0; }
+.archive-year { font-size: 1.563em; margin-top: 1.5em; }
+.archive-month h3 { font-size: 1.25em; }
+.archive-list li { display: flex; align-items: baseline; gap: 1em; padding: .35em 0; }
+.archive-list time { color: rgb(var(--gray)); font-size: .8em; flex: 0 0 3.5em; }
+.about-prose p:first-child { margin-top: 0; }
+.prose { min-width: 0; }
+.prose table { display: block; max-width: 100%; overflow-x: auto; border-collapse: collapse; }
+.prose th, .prose td { padding: .5em .7em; border: 1px solid rgb(var(--gray-light)); text-align: left; }
+.prose pre { max-width: 100%; overflow-x: auto; }
+.prose pre code { white-space: pre; }
+@media (max-width: 720px) {
+  .page-heading { gap: .5em; margin-bottom: 1.5em; }
+  .page-heading h1 { font-size: 2.15em; }
+}
