@@ -38,7 +38,7 @@ order: 0
 
 1. 点击 **Add file → Create new file**，填写 `src/content/posts/my-first-note.md`。
 2. 从 [文章模板](templates/article.md) 复制内容，填写文章信息与 Markdown 正文。
-3. 如果要放入某个栏目，在开头的 `---` 之间填写 `column: ai-notes`；先确认 `src/content/columns/ai-notes.md` 已存在。也可以省略 `column`，文章仍会显示在首页、全部文章和归档中。
+3. 如果要放入某个栏目，在开头的 `---` 之间填写 `column: ai-notes`；先确认 `src/content/columns/ai-notes.md` 已存在。也可以省略 `column`，文章仍会显示在首页和全部文章中。
 4. 草稿完成后把 `draft` 改为 `false`，确认发布日期，再提交到 `main`。
 
 ```markdown
@@ -103,7 +103,8 @@ npm.cmd run verify
 - 全局设计变量与基础排版：`src/styles/global.css`；页面工具样式：`src/styles/site.css`；本地 Atkinson 字体：`src/assets/fonts/`。这些样式已重新设计，并非官方模板原样外观。
 - 后备箱文章层架：`src/components/DaveTrunk.astro`，首页默认展示最多六篇真实文章，点击纸卡打开原文章。
 - 庭院、云朵与戴夫：`src/components/GardenScene.astro`；收集阳光、植物与豌豆互动：`src/components/GardenPlayground.astro`。旧粒子背景已停用。
-- 插画资源：`public/garden/`，由内置图像生成工具制作，WebP 合计约 591 KiB；提示词与透明度验收见素材记录。正文使用奶油纸张界面，保留代码复制、搜索、RSS 与归档。
+- 插画资源：`public/garden/`，庭院WebP由内置图像生成工具制作，合计约591 KiB；提示词与透明度验收见素材记录。左上角红色割草机为代码绘制的SVG，浏览器图标使用同一主题。
+- 实践地图：`src/pages/practice.astro`，按资料治理、知识检索、训练实验与应用交付组织阅读入口，不按年月分组。地图引用已有文章，不复制文章；新发表且未加入主题的文章会进入“继续探索”。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。

@@ -1,1 +1,18 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64"><rect x="3" y="3" width="58" height="58" rx="15" fill="#fff1b4" stroke="#493c29" stroke-width="4"/><g fill="#efc44d" stroke="#705a2d" stroke-width="1.8"><ellipse cx="32" cy="16" rx="6" ry="10"/><ellipse cx="32" cy="48" rx="6" ry="10"/><ellipse cx="16" cy="32" rx="10" ry="6"/><ellipse cx="48" cy="32" rx="10" ry="6"/><ellipse cx="21" cy="21" rx="6" ry="9" transform="rotate(-45 21 21)"/><ellipse cx="43" cy="21" rx="6" ry="9" transform="rotate(45 43 21)"/><ellipse cx="21" cy="43" rx="6" ry="9" transform="rotate(45 21 43)"/><ellipse cx="43" cy="43" rx="6" ry="9" transform="rotate(-45 43 43)"/></g><circle cx="32" cy="32" r="15" fill="#987046" stroke="#493c29" stroke-width="2.5"/><ellipse cx="27" cy="30" rx="2" ry="3" fill="#352c22"/><ellipse cx="37" cy="30" rx="2" ry="3" fill="#352c22"/><path d="M26 37q6 7 12 0" fill="none" stroke="#352c22" stroke-width="2.5" stroke-linecap="round"/></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64" fill="none">
+  <title>戴夫的红色割草机</title>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14" fill="#fff1b4" stroke="#493c29" stroke-width="3"/>
+  <g stroke="#493c29" stroke-linecap="round" stroke-linejoin="round">
+    <path d="m40 38 9-26h8" stroke-width="4"/>
+    <path d="M51 11h7" stroke-width="5"/>
+    <path d="m8 40 7-10h24l14 12 3 8H7Z" fill="#e0583c" stroke-width="2.5"/>
+    <path d="M21 30v-9h16v11" fill="#6b7963" stroke-width="2.5"/>
+    <path d="M24 20v-4h10v4" fill="#dfc88b" stroke-width="2"/>
+    <path d="M24 25h10" stroke="#c8d0b3" stroke-width="2"/>
+    <path d="M8 44h46v6H7Z" fill="#b3382c" stroke-width="2"/>
+    <circle cx="16" cy="49" r="7" fill="#3e493c" stroke-width="2.5"/>
+    <circle cx="16" cy="49" r="2.5" fill="#e5d9ad" stroke="none"/>
+    <circle cx="47" cy="49" r="7" fill="#3e493c" stroke-width="2.5"/>
+    <circle cx="47" cy="49" r="2.5" fill="#e5d9ad" stroke="none"/>
+    <path d="m13 37 5-3" stroke="#ffc384" stroke-width="2"/>
+  </g>
+</svg>

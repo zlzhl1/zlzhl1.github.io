@@ -6,14 +6,14 @@ import HeaderLink from './HeaderLink.astro';
 <header class="site-header">
   <nav aria-label="主导航">
     <a class="brand" href={url()}>
-      <span class="brand-mark" aria-hidden="true">D<span></span></span>
+      <img class="brand-mark" src={url('garden/lawn-mower.svg')} width="48" height="40" alt="" aria-hidden="true" />
       <span class="brand-title">{SITE.title}</span>
     </a>
     <div class="internal-links">
       <HeaderLink href={url()}>首页</HeaderLink>
       <HeaderLink href={url('posts/')}>文章</HeaderLink>
       <HeaderLink href={url('columns/')}>栏目</HeaderLink>
-      <HeaderLink href={url('archives/')}>归档</HeaderLink>
+      <HeaderLink href={url('practice/')}>实践地图</HeaderLink>
       <HeaderLink href={url('about/')}>关于</HeaderLink>
     </div>
     <a class="github-link" href={SITE.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="戴夫（Dave）的 GitHub（新窗口打开）" title="戴夫（Dave） · GitHub">
@@ -25,8 +25,7 @@ import HeaderLink from './HeaderLink.astro';
   .site-header { position: sticky; top: 12px; z-index: 30; width: min(1120px, calc(100% - 24px)); margin: 14px auto 0; border: 3px solid #544029; border-radius: 15px 12px 17px 13px; background: repeating-linear-gradient(176deg, transparent 0 15px, #976b3b33 16px 17px, transparent 18px 29px), linear-gradient(#d5af71, #c08c4d 65%, #af7b40); box-shadow: inset 0 2px 0 #f6d99b, inset 0 -3px 0 #8d622f, 0 5px 0 #4b573445, 0 8px 18px #2d512e20; }
   nav { display: flex; align-items: center; justify-content: space-between; gap: 18px; padding: 8px 13px 9px 15px; }
   .brand { display: inline-flex; align-items: center; gap: 10px; min-width: 0; color: #483822; text-decoration: none; }
-  .brand-mark { position: relative; display: grid; place-items: center; width: 37px; height: 37px; flex: 0 0 37px; border: 2px solid #4c542c; border-radius: 12px 10px 12px 8px; background: linear-gradient(#b9cc6b, #769448); color: #fff8d6; font-size: 25px; font-weight: 700; line-height: 1; text-shadow: 1px 2px #4c542c; box-shadow: inset 0 2px #dce8a0, 0 2px #806039; transform: rotate(-4deg); }
-  .brand-mark span { position: absolute; width: 9px; height: 5px; right: -5px; top: -3px; border: 1px solid #4c542c; border-radius: 9px 1px 9px 1px; background: #b5cb66; transform: rotate(-25deg); }
+  .brand-mark { display: block; width: 48px; height: 40px; flex: 0 0 48px; object-fit: contain; border-radius: 0; filter: drop-shadow(0 2px 0 #805d3155); }
   .brand-title { font-size: 17px; font-weight: 700; letter-spacing: -.025em; white-space: nowrap; text-shadow: 0 1px #f3d69a; }
   .internal-links { display: flex; align-items: center; gap: 5px; }
   .github-link { display: grid; place-items: center; flex: 0 0 43px; width: 43px; height: 43px; border: 2px solid #66502c; border-radius: 11px; color: #4a4a2c; background: #eed49a; box-shadow: inset 0 2px #fff1c5, 0 3px #805d31; transition: transform .2s ease, background .2s ease; }
@@ -36,7 +35,7 @@ import HeaderLink from './HeaderLink.astro';
     nav { flex-wrap: wrap; gap: 5px 10px; padding: 8px 10px 9px; }
     .brand { order: 1; flex: 1; }
     .brand-title { font-size: 15px; }
-    .brand-mark { width: 31px; height: 31px; flex-basis: 31px; font-size: 21px; }
+    .brand-mark { width: 40px; height: 34px; flex-basis: 40px; }
     .github-link { order: 2; width: 39px; height: 39px; flex-basis: 39px; }
     .internal-links { order: 3; width: 100%; justify-content: center; padding-top: 5px; border-top: 1px solid #8d693a66; }
   }
@@ -44,9 +43,9 @@ import HeaderLink from './HeaderLink.astro';
     nav { gap: 4px 7px; padding-inline: 9px; }
     .brand { gap: 7px; }
     .brand-title { font-size: 14px; }
-    .brand-mark { width: 28px; height: 29px; flex-basis: 28px; font-size: 20px; }
+    .brand-mark { width: 36px; height: 31px; flex-basis: 36px; }
     .github-link { width: 36px; height: 36px; flex-basis: 36px; }
   }
-  @media (max-width: 350px) { .brand-title { font-size: 13px; } .brand-mark { width: 25px; flex-basis: 25px; } }
+  @media (max-width: 350px) { .brand-title { font-size: 13px; } .brand-mark { width: 31px; flex-basis: 31px; } }
   @media (prefers-reduced-motion: reduce) { .github-link:hover { transform: none; } }
 </style>
