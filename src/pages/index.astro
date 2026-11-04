@@ -1,16 +1,21 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DaveTrunk from '../components/DaveTrunk.astro';
+import DaveFriend from '../components/DaveFriend.astro';
 import { getPosts } from '../lib/posts';
 const posts = await getPosts();
 ---
 <BaseLayout home>
-  <DaveTrunk posts={posts.slice(0, 6)} total={posts.length} />
+  <div class="home-scene">
+    <DaveFriend />
+    <DaveTrunk posts={posts.slice(0, 6)} total={posts.length} />
+  </div>
 </BaseLayout>
 <style>
-  :global(main.home-page) { width: min(1080px, calc(100% - 40px)); margin-top: 16px; margin-bottom: 0; padding-top: 16px; padding-bottom: 18px; }
-  @media (min-width: 1320px) { :global(main.home-page) { transform: translateX(45px); } }
+  :global(main.home-page) { width: min(1280px, calc(100% - 40px)); margin-top: 16px; margin-bottom: 0; padding-top: 16px; padding-bottom: 18px; }
+  .home-scene { --dave-size: clamp(76px, 16vw, 240px); position: relative; display: grid; grid-template-columns: var(--dave-size) minmax(0, 1000px); justify-content: center; gap: 24px; }
   @media (max-width: 720px) {
     :global(main.home-page) { width: calc(100% - 20px); padding-top: 16px; padding-bottom: 30px; }
+    .home-scene { display: block; padding-top: calc(var(--dave-size) * 1.223104 - 65px); }
   }
 </style>

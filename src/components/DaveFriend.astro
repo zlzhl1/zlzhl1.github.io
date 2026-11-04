@@ -1,0 +1,48 @@
+---
+import { url } from '../lib/posts';
+---
+<div class="dave-friend" data-dave-friend>
+  <button class="dave-hello" type="button" data-dave-hello aria-label="和戴夫打个招呼" title="和戴夫打个招呼">
+    <img src={url('garden/dave.webp')} alt="" width="1134" height="1387" fetchpriority="high" />
+  </button>
+  <p class="dave-bubble" data-dave-bubble role="status" hidden></p>
+</div>
+<style>
+  .dave-friend { position: relative; z-index: 6; align-self: start; width: var(--dave-size); margin-top: 170px; }
+  .dave-hello { display: block; width: 100%; border: 0; padding: 0; background: transparent; transform-origin: 50% 95%; transition: transform .2s ease; filter: drop-shadow(0 8px 3px #2b411d30); }
+  .dave-hello img { display: block; width: 100%; height: auto; border-radius: 0; pointer-events: none; }
+  .dave-hello:hover { transform: rotate(-3deg) translateY(-4px); }
+  .dave-hello:active { transform: rotate(3deg) scale(.98); }
+  .dave-bubble { position: absolute; top: -45px; left: 40%; width: 210px; margin: 0; padding: 14px 17px; border: 3px solid #463722; border-radius: 47% 42% 44% 18% / 40% 42% 36% 32%; background: #fffbe9; color: #493c29; box-shadow: 3px 4px 0 #493c2926; font-size: 15px; font-weight: 700; line-height: 1.6; transform: rotate(2deg); }
+  .dave-bubble::after { content: ''; position: absolute; bottom: -12px; left: 18px; width: 16px; height: 16px; background: #fffbe9; border-left: 3px solid #463722; border-bottom: 3px solid #463722; transform: skewY(-30deg); }
+  @media (max-width: 720px) {
+    .dave-friend { position: absolute; top: 0; left: 0; margin-top: 0; }
+    .dave-bubble { top: -20px; left: 60%; width: 170px; padding: 11px 13px; font-size: 13px; }
+  }
+  @media (prefers-reduced-motion: reduce) { .dave-hello { transition-duration: .01ms; } }
+</style>
+<script>
+  let disposeDave = () => {};
+  function initializeDave() {
+    disposeDave();
+    const hello = document.querySelector<HTMLButtonElement>('[data-dave-hello]');
+    const bubble = document.querySelector<HTMLElement>('[data-dave-bubble]');
+    if (!hello || !bubble) return;
+    bubble.hidden = true;
+    const lines = ['歪比巴卜！来翻翻新笔记。', '这篇不错，拿去看看！', '脑子留给思考，笔记放进后备箱。'];
+    let quote = 0;
+    let timer = 0;
+    const greet = () => {
+      bubble.textContent = lines[quote++ % lines.length]; bubble.hidden = false;
+      window.clearTimeout(timer); timer = window.setTimeout(() => { bubble.hidden = true; }, 3000);
+      hello.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-5deg) translateY(-5px)' }, { transform: 'rotate(3deg)' }, { transform: 'rotate(0)' }], { duration: 500, easing: 'ease-out' });
+    };
+    hello.addEventListener('click', greet);
+    disposeDave = () => { window.clearTimeout(timer); bubble.hidden = true; hello.removeEventListener('click', greet); };
+  }
+  initializeDave();
+  document.addEventListener('astro:page-load', initializeDave);
+  document.addEventListener('astro:before-swap', () => disposeDave());
+  window.addEventListener('pagehide', () => disposeDave());
+  window.addEventListener('pageshow', initializeDave);
+</script>

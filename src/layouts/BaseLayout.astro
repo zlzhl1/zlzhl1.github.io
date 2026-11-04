@@ -13,7 +13,7 @@ const { title, description, article = false, home = false } = Astro.props;
 <html lang="zh-CN">
   <head><BaseHead title={title} description={description} article={article} /></head>
   <body class:list={{ 'reading-page': article, 'garden-home': home }}>
-    <GardenScene home={home} />
+    <GardenScene />
     <a class="skip-link" href="#main">跳转到正文</a>
     <Header />
     <main id="main" class:list={{ 'article-page': article, 'home-page': home }}><slot /></main>
