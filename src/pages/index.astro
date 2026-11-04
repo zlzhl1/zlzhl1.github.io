@@ -1,46 +1,16 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
-import PostList from '../components/PostList.astro';
-import { getPosts, url } from '../lib/posts';
+import DaveTrunk from '../components/DaveTrunk.astro';
+import { getPosts } from '../lib/posts';
 const posts = await getPosts();
 ---
 <BaseLayout home>
-  <header class="home-intro">
-    <h1>记录与探索<span aria-hidden="true">.</span></h1>
-    <p>关于 AI、代码，和正在发生的想法。</p>
-  </header>
-  <section class="home-entries" id="latest" aria-labelledby="latest-title">
-    <div class="entries-heading">
-      <h2 id="latest-title">最新文章 <span>{posts.length}</span></h2>
-      <a href={url('posts/')}>全部文章 <span aria-hidden="true">↗</span></a>
-    </div>
-    {posts.length > 0 ? <PostList posts={posts.slice(0, 6)} layout="journal" /> : <p class="empty-message">暂时还没有文章。</p>}
-  </section>
+  <DaveTrunk posts={posts.slice(0, 6)} total={posts.length} />
 </BaseLayout>
 <style>
-  :global(main.home-page) { width: min(960px, calc(100% - 64px)); padding-top: 42px; padding-bottom: 58px; }
-  .home-intro { margin-bottom: 30px; }
-  .home-intro h1 { margin: 0 0 9px; font-size: clamp(28px, 3vw, 36px); line-height: 1.3; letter-spacing: -.04em; font-weight: 550; }
-  .home-intro h1 span { color: var(--accent); margin-left: 3px; }
-  .home-intro p { color: var(--muted); font-size: 15px; line-height: 1.8; margin: 0; }
-  .home-entries { scroll-margin-top: 120px; }
-  .entries-heading { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding-bottom: 8px; border-bottom: 1px solid var(--line); }
-  .entries-heading h2 { display: flex; align-items: center; gap: 10px; margin: 0; font-size: 14px; font-weight: 500; letter-spacing: .02em; }
-  .entries-heading h2 span { color: var(--muted); font: 11px/1 var(--font-mono); }
-  .entries-heading > a { display: inline-flex; align-items: center; gap: 9px; color: var(--muted); font-size: 12px; text-decoration: none; min-height: 36px; white-space: nowrap; }
-  .entries-heading > a:hover { color: var(--accent); }
-  .entries-heading > a span { display: inline-block; transition: transform .2s ease; }
-  .entries-heading > a:hover span { transform: translate(2px, -2px); }
-  @media (min-width: 1100px) {
-    .home-intro { position: relative; isolation: isolate; }
-    .home-intro::before { content: ''; position: absolute; z-index: -1; top: -12px; bottom: -12px; left: -12px; width: 440px; max-width: 100%; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 76%, transparent); border-radius: 16px; filter: blur(10px); pointer-events: none; }
-    .entries-heading h2 { background: var(--bg); box-shadow: 0 0 14px 9px var(--bg); border-radius: 4px; }
-  }
+  :global(main.home-page) { width: min(1080px, calc(100% - 40px)); margin-top: 16px; margin-bottom: 0; padding-top: 16px; padding-bottom: 18px; }
+  @media (min-width: 1320px) { :global(main.home-page) { transform: translateX(45px); } }
   @media (max-width: 720px) {
-    :global(main.home-page) { width: calc(100% - 40px); padding-top: 25px; padding-bottom: 38px; }
-    .home-intro { margin-bottom: 22px; }
-    .home-intro h1 { font-size: 29px; }
-    .home-intro p { font-size: 14px; }
+    :global(main.home-page) { width: calc(100% - 20px); padding-top: 16px; padding-bottom: 30px; }
   }
-  @media (prefers-reduced-motion: reduce) { .entries-heading > a span { transition: none; } .entries-heading > a:hover span { transform: none; } }
 </style>

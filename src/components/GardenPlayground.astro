@@ -1,0 +1,94 @@
+---
+import { url } from '../lib/posts';
+---
+<section class="garden-playground" data-garden-playground aria-label="庭院小互动">
+  <div class="grass-shadow" aria-hidden="true"></div>
+  <button class="plant sunflower" data-grow-sun type="button" aria-label="让向日葵摇一摇" title="让向日葵摇一摇"><img src={url('garden/sunflower.webp')} alt="" width="180" height="210" /></button>
+  <button class="sun-token" data-collect-sun type="button" aria-label="收集阳光" title="收集阳光">
+    <svg viewBox="0 0 80 80" aria-hidden="true"><path d="m40 2 8 13 15-5 1 16 14 6-9 13 6 14-17 2-6 15-13-9-14 8-4-16-16-5 8-14L4 26l16-5 4-16 15 8Z" fill="#f8c94d" stroke="#8c6425" stroke-width="2.5" /><circle cx="40" cy="40" r="21" fill="#ffe77c" stroke="#c79738" stroke-width="2" /><path d="M28 34c7-9 18-11 25-4" stroke="#fff5bd" stroke-width="4" fill="none" stroke-linecap="round" /></svg>
+    <span class="sun-earned" aria-hidden="true">+25</span>
+  </button>
+  <output class="sun-wallet" aria-label="已收集阳光"><span aria-hidden="true">☀</span><span data-sun-count>0</span></output>
+  <button class="plant peashooter" data-shoot-pea type="button" aria-label="发射豌豆" title="发射豌豆"><img src={url('garden/peashooter.webp')} alt="" width="180" height="210" /></button>
+  <div class="pea-track" data-pea-track aria-hidden="true"></div>
+  <div class="zombie-target" data-zombie-target aria-hidden="true">
+    <span class="target-post"></span>
+    <svg viewBox="0 0 90 105"><path d="M22 82 12 101h64L65 80" fill="#875c39" stroke="#493d2e" stroke-width="3" /><path d="M24 79C8 58 12 17 35 11c26-7 45 8 43 34-1 21-9 40-29 40Z" fill="#a0b47c" stroke="#493d2e" stroke-width="4" /><path d="m24 23 7-6 1 8 10-7 1 8" fill="#657c52" /><ellipse cx="34" cy="44" rx="11" ry="13" fill="#fff4d4" stroke="#493d2e" stroke-width="3" /><ellipse cx="63" cy="42" rx="10" ry="11" fill="#fff4d4" stroke="#493d2e" stroke-width="3" /><circle cx="36" cy="46" r="4" fill="#343c2e" /><circle cx="61" cy="45" r="4" fill="#343c2e" /><path d="m42 60 12-3-1 7m-24 6c14-5 27-3 35 0l-4 9-24-1Z" fill="#506443" stroke="#493d2e" stroke-width="2.5" /><path d="m38 69 1 6 7-1v-6m9 0v6l6 1" fill="#fff0c4" stroke="#493d2e" stroke-width="2" /></svg>
+  </div>
+</section>
+<style>
+  .garden-playground { position: relative; z-index: 7; width: min(1200px, calc(100% - 32px)); height: 156px; flex: 0 0 156px; margin: -72px auto 0; isolation: isolate; }
+  .grass-shadow { position: absolute; inset: auto 0 -5px; height: 32px; background: radial-gradient(ellipse at center, #30562c38, transparent 68%); z-index: -1; }
+  .plant { position: absolute; bottom: 5px; border: 0; padding: 0; background: transparent; width: 112px; transform-origin: 50% 92%; filter: drop-shadow(0 6px 2px #2f4d242b); }
+  .plant img { display: block; width: 100%; height: 138px; object-fit: contain; border-radius: 0; pointer-events: none; }
+  .sunflower { left: 8px; animation: flower-sway 4.4s ease-in-out infinite alternate; }
+  .peashooter { left: 154px; animation: pea-breathe 3.6s ease-in-out infinite alternate; }
+  .plant:hover { filter: drop-shadow(0 6px 2px #2f4d2440) brightness(1.06); }
+  .sun-token { position: absolute; left: 88px; bottom: 116px; width: 54px; height: 54px; border: 0; padding: 0; border-radius: 50%; background: transparent; filter: drop-shadow(0 0 12px #ffe57c85); animation: sun-float 3.8s ease-in-out infinite alternate; z-index: 3; }
+  .sun-token svg { display: block; width: 100%; height: 100%; transition: transform .2s; }
+  .sun-token:hover svg { transform: rotate(18deg) scale(1.12); }
+  .sun-token.collected svg { transform: scale(.1); opacity: 0; }
+  .sun-earned { position: absolute; left: 8px; top: -10px; font-weight: 800; color: #684b18; font-size: 22px; opacity: 0; text-shadow: 0 2px #fff1a5; pointer-events: none; }
+  .sun-token.collected .sun-earned { animation: sun-earned .65s ease-out both; }
+  .sun-wallet { position: absolute; bottom: -15px; left: 10px; display: inline-flex; align-items: center; gap: 8px; padding: 2px 12px 2px 9px; min-width: 78px; height: 34px; border: 2px solid #644e2e; border-radius: 8px; background: #fff2bc; box-shadow: 2px 3px 0 #644e2e30; color: #584329; font-size: 16px; font-weight: 800; line-height: 1; }
+  .sun-wallet > span:first-child { font-size: 24px; color: #b98b28; }
+  .pea-track { position: absolute; left: 247px; right: 90px; bottom: 89px; height: 14px; pointer-events: none; overflow: visible; }
+  .pea-track :global(.flying-pea) { position: absolute; left: 0; top: 0; width: 17px; height: 17px; border: 2px solid #456228; border-radius: 50%; background: radial-gradient(circle at 30% 25%, #e3f8a3, #82b747 60%, #4a8438); box-shadow: 0 2px 2px #2b45232d; }
+  .zombie-target { position: absolute; right: 20px; bottom: 2px; width: 70px; transform: rotate(5deg); transform-origin: 50% 100%; }
+  .zombie-target svg { position: relative; display: block; width: 70px; }
+  .target-post { position: absolute; width: 9px; height: 55px; background: #816040; border: 2px solid #4e3d2c; bottom: -7px; left: 31px; transform: rotate(-3deg); }
+  .zombie-target.hit { animation: target-wobble .6s ease-out; }
+  :global(.garden-resting) .plant, :global(.garden-resting) .sun-token { animation-play-state: paused; }
+  @keyframes flower-sway { from { transform: rotate(-3deg); } to { transform: rotate(3deg); } }
+  @keyframes pea-breathe { from { transform: rotate(1deg) translateY(0); } to { transform: rotate(-2deg) translateY(-3px); } }
+  @keyframes sun-float { from { transform: translateY(0) rotate(-5deg); } to { transform: translateY(-9px) rotate(6deg); } }
+  @keyframes sun-earned { from { transform: translateY(0); opacity: 1; } to { transform: translateY(-34px); opacity: 0; } }
+  @keyframes target-wobble { 20% { transform: rotate(22deg); } 45% { transform: rotate(-10deg); } 70% { transform: rotate(10deg); } 100% { transform: rotate(5deg); } }
+  @media (max-width: 720px) { .garden-playground { width: calc(100% - 24px); height: 140px; flex-basis: 140px; margin-top: -24px; } .plant { width: 88px; } .plant img { height: 114px; } .peashooter { left: 104px; } .sunflower { left: 0; } .sun-token { width: 44px; height: 44px; left: 59px; bottom: 97px; } .sun-wallet { bottom: -16px; } .pea-track { left: 176px; right: 61px; bottom: 72px; } .zombie-target { right: 3px; width: 52px; } .zombie-target svg { width: 52px; } .target-post { left: 23px; } }
+  @media (prefers-reduced-motion: reduce) { .sunflower { animation-duration: 12s; } .peashooter { animation-duration: 14s; } .sun-token { animation-duration: 13s; } }
+</style>
+<script>
+  let disposePlayground = () => {};
+  function initializePlayground() {
+    disposePlayground();
+    const playground = document.querySelector<HTMLElement>('[data-garden-playground]');
+    if (!playground) return;
+    const collect = playground.querySelector<HTMLButtonElement>('[data-collect-sun]');
+    const sunflower = playground.querySelector<HTMLButtonElement>('[data-grow-sun]');
+    const shoot = playground.querySelector<HTMLButtonElement>('[data-shoot-pea]');
+    const counter = playground.querySelector<HTMLElement>('[data-sun-count]');
+    const track = playground.querySelector<HTMLElement>('[data-pea-track]');
+    const target = playground.querySelector<HTMLElement>('[data-zombie-target]');
+    collect?.classList.remove('collected'); target?.classList.remove('hit');
+    const animations = new Set<Animation>();
+    let sun = 0; let collecting = false; let shots = 0; let lastShot = 0;
+    const timers = new Set<number>();
+    const later = (fn: () => void, delay: number) => { const id = window.setTimeout(() => { timers.delete(id); fn(); }, delay); timers.add(id); };
+    try { const saved = Number(sessionStorage.getItem('dave-garden-sun')); if (Number.isFinite(saved) && saved >= 0) sun = Math.min(saved, 999999); } catch { /* Optional score persistence. */ }
+    const update = () => { if (counter) counter.textContent = String(sun); };
+    const wiggle = (element: HTMLElement | null) => element?.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-9deg)' }, { transform: 'rotate(6deg)' }, { transform: 'rotate(0)' }], { duration: 480, easing: 'ease-out' });
+    const collectSun = () => {
+      if (collecting || !collect) return;
+      collecting = true; sun = Math.min(sun + 25, 999999); update();
+      try { sessionStorage.setItem('dave-garden-sun', String(sun)); } catch { /* The interaction also works without storage. */ }
+      collect.classList.add('collected'); wiggle(sunflower);
+      later(() => { collect.classList.remove('collected'); collecting = false; }, 700);
+    };
+    const growSun = () => { wiggle(sunflower); if (!collecting) collect?.animate([{ transform: 'scale(.8)' }, { transform: 'scale(1.2)' }, { transform: 'scale(1)' }], { duration: 450 }); };
+    const shootPea = () => {
+      if (!track || !shoot || performance.now() - lastShot < 240 || animations.size >= 3) return;
+      lastShot = performance.now(); playground.dataset.shots = String(++shots); wiggle(shoot);
+      const pea = document.createElement('span'); pea.className = 'flying-pea'; track.append(pea);
+      const flight = pea.animate([{ transform: 'translateX(0) scale(.8)' }, { transform: `translateX(${Math.max(24, track.clientWidth - 8)}px) scale(1)` }], { duration: matchMedia('(prefers-reduced-motion: reduce)').matches ? 650 : 1000, easing: 'linear', fill: 'forwards' });
+      animations.add(flight);
+      flight.finished.then(() => { animations.delete(flight); pea.remove(); if (target) { target.classList.remove('hit'); void target.offsetWidth; target.classList.add('hit'); later(() => target.classList.remove('hit'), 650); } }).catch(() => { animations.delete(flight); pea.remove(); });
+    };
+    collect?.addEventListener('click', collectSun); sunflower?.addEventListener('click', growSun); shoot?.addEventListener('click', shootPea); update();
+    disposePlayground = () => { collect?.removeEventListener('click', collectSun); sunflower?.removeEventListener('click', growSun); shoot?.removeEventListener('click', shootPea); timers.forEach((id) => window.clearTimeout(id)); animations.forEach((animation) => animation.cancel()); playground.querySelectorAll('.flying-pea').forEach((pea) => pea.remove()); collect?.classList.remove('collected'); target?.classList.remove('hit'); };
+  }
+  initializePlayground();
+  document.addEventListener('astro:page-load', initializePlayground);
+  document.addEventListener('astro:before-swap', () => disposePlayground());
+  window.addEventListener('pagehide', () => disposePlayground());
+  window.addEventListener('pageshow', initializePlayground);
+</script>

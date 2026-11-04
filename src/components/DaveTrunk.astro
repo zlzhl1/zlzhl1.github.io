@@ -1,0 +1,144 @@
+---
+import type { CollectionEntry } from 'astro:content';
+import { columnPath, formatDate, getPostColumn, postPath, url } from '../lib/posts';
+interface Props { posts: CollectionEntry<'posts'>[]; total?: number; }
+const { posts, total = posts.length } = Astro.props;
+const entries = await Promise.all(posts.map(async (post) => ({ post, column: await getPostColumn(post) })));
+---
+
+<section class="dave-trunk" data-dave-trunk data-knocks="0" aria-labelledby="trunk-title">
+  <div class="van-shadow" aria-hidden="true"></div>
+  <div class="rear-wheel wheel-left" aria-hidden="true"></div><div class="rear-wheel wheel-right" aria-hidden="true"></div>
+  <svg class="open-hatch" viewBox="0 0 1000 156" fill="none" preserveAspectRatio="none" aria-hidden="true">
+    <defs>
+      <linearGradient id="dave-hatch-paint" x1="500" y1="6" x2="500" y2="151" gradientUnits="userSpaceOnUse"><stop stop-color="#bed18b" /><stop offset=".42" stop-color="#92ad67" /><stop offset="1" stop-color="#6c874d" /></linearGradient>
+      <linearGradient id="dave-hatch-glass" x1="208" y1="21" x2="734" y2="103" gradientUnits="userSpaceOnUse"><stop stop-color="#b7d8bd" /><stop offset=".5" stop-color="#86a994" /><stop offset="1" stop-color="#5f8171" /></linearGradient>
+    </defs>
+    <path d="M38 148 77 40Q82 16 118 13L879 8Q915 6 927 36L967 147Z" fill="url(#dave-hatch-paint)" stroke="#3f482f" stroke-width="7" stroke-linejoin="round" />
+    <path d="m111 40 763-5 24 62-811 6Z" fill="url(#dave-hatch-glass)" stroke="#4e6144" stroke-width="5" stroke-linejoin="round" />
+    <path d="m135 47 124-2-39 47-107 3Z" fill="#e0eed1" opacity=".46" /><path d="m301 44 40-1-39 47-40 1Z" fill="#e0eed1" opacity=".22" />
+    <path d="M69 125q414-17 868-4" stroke="#c1d195" stroke-width="7" stroke-linecap="round" /><path d="m80 50-27 91m866-96 29 95" stroke="#607842" stroke-width="5" stroke-linecap="round" /><path d="m472 20 51-1" stroke="#d3dfa9" stroke-width="5" stroke-linecap="round" />
+  </svg>
+  <div class="hatch-strut strut-left" aria-hidden="true"></div><div class="hatch-strut strut-right" aria-hidden="true"></div>
+  <div class="trunk-sign">
+    <i class="sign-bolt bolt-left" aria-hidden="true"></i><h1 id="trunk-title">戴夫<span>（Dave）</span>的后备箱</h1><i class="sign-bolt bolt-right" aria-hidden="true"></i>
+    <svg class="sign-sprout" viewBox="0 0 42 42" fill="none" aria-hidden="true"><path d="M21 36V19" stroke="#4b5b2c" stroke-width="3" stroke-linecap="round" /><path d="M21 24C7 25 7 15 9 11c10-1 17 4 12 13Z" fill="#7d9a44" stroke="#4b5b2c" stroke-width="2.5" /><path d="M21 18C18 5 27 2 34 5c0 10-5 16-13 13Z" fill="#9eb95c" stroke="#4b5b2c" stroke-width="2.5" /></svg>
+  </div>
+  <div class="van-body" aria-hidden="true"><span class="paint-scratch scratch-one"></span><span class="paint-scratch scratch-two"></span></div>
+  <div class="cargo-bay">
+    <span class="rim-rivet rivet-a" aria-hidden="true"></span><span class="rim-rivet rivet-b" aria-hidden="true"></span>
+    <header class="stock-heading">
+      <h2><svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="m4 9 8-5 8 5v11H4Z" fill="#e9bd6c" stroke="#332f20" stroke-width="1.8" stroke-linejoin="round" /><path d="M8 12h8m-8 4h5" stroke="#694f2e" stroke-width="1.7" stroke-linecap="round" /></svg>新鲜笔记 <span>{total}</span></h2>
+      <a class="all-notes" href={url('posts/')}>全部文章 <span aria-hidden="true">→</span></a>
+    </header>
+    {entries.length > 0 ? <ul class="seed-rack">
+      {entries.map(({ post, column }, index) => <li class="shelf-slot" style={`--packet-tilt:${[-1.4, .7, -1, 1, -.5, 1.3][index]}deg;--packet-delay:${index * 70}ms`}>
+        <article class="seed-packet" data-trunk-article data-slug={post.id}>
+          <span class="packet-clip" aria-hidden="true"></span>
+          <div class="packet-top"><span class="packet-number">{String(index + 1).padStart(2, '0')}</span><svg class="packet-leaf" viewBox="0 0 44 32" fill="none" aria-hidden="true"><path d="M22 29V14" stroke="#637a36" stroke-width="2.5" stroke-linecap="round" /><path d="M21 23C8 25 5 16 8 10c10-1 17 4 13 13Z" fill="#a6bc62" stroke="#637a36" stroke-width="2" /><path d="M23 16C20 5 27 2 36 4c1 8-4 15-13 12Z" fill="#c1d07f" stroke="#637a36" stroke-width="2" /></svg><time datetime={post.data.date.toISOString()}>{formatDate(post.data.date)}</time></div>
+          <h3><a href={postPath(post)}>{post.data.title}</a></h3>
+          <p class="packet-description">{post.data.description}</p>
+          <div class="packet-bottom"><div class="packet-tags">{column ? <a href={columnPath(column)}>{column.data.title}</a> : post.data.tags.slice(0, 2).map((tag) => <span>{tag}</span>)}</div><span class="read-arrow" aria-hidden="true">↗</span></div>
+        </article>
+        <div class="wood-shelf" aria-hidden="true"><i></i><i></i></div>
+      </li>)}
+    </ul> : <div class="empty-trunk"><svg viewBox="0 0 60 60" fill="none" aria-hidden="true"><path d="M30 51V28M30 38C9 39 8 24 13 16c15-1 25 7 17 22ZM31 28C24 11 37 5 49 9c1 15-6 23-18 19Z" stroke="#a4b66e" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" /></svg><p>后备箱还空着，新想法正在发芽。</p></div>}
+    <span class="rim-rivet rivet-c" aria-hidden="true"></span><span class="rim-rivet rivet-d" aria-hidden="true"></span>
+  </div>
+  <div class="rear-panel">
+    <div class="tail-light tail-light-left" aria-hidden="true"><i></i><i></i></div><div class="rear-grooves" aria-hidden="true"><i></i><i></i><i></i></div>
+    <button type="button" class="license-plate" data-trunk-knock aria-label="敲敲后备箱" title="敲敲后备箱"><span class="plate-screw" aria-hidden="true"></span>DAVE<span class="plate-screw" aria-hidden="true"></span></button>
+    <svg class="car-key" viewBox="0 0 44 44" fill="none" aria-hidden="true"><path d="m22 23-11 12H6v-5l11-11" fill="#d4c690" stroke="#4c5134" stroke-width="2.5" stroke-linejoin="round" /><circle cx="25" cy="16" r="9" fill="#d4c690" stroke="#4c5134" stroke-width="2.5" /><circle cx="27" cy="13" r="3" fill="#6b8551" stroke="#4c5134" stroke-width="2" /></svg>
+    <div class="tail-light tail-light-right" aria-hidden="true"><i></i><i></i></div>
+  </div>
+  <div class="chrome-bumper" aria-hidden="true"><span></span><span></span></div>
+  <span class="sr-only" data-knock-status role="status" aria-live="polite"></span>
+</section>
+
+<style>
+  .dave-trunk { --trunk-outline:#3f482f; position:relative; width:min(1000px,100%); margin:0 auto; padding:125px 0 24px; isolation:isolate; filter:drop-shadow(0 15px 8px #2d432d26); }
+  .van-shadow { position:absolute; z-index:-3; bottom:-7px; left:5%; width:90%; height:52px; background:#273e2c42; border-radius:50%; filter:blur(9px); }
+  .van-body { position:absolute; z-index:-1; top:119px; bottom:33px; left:0; right:0; border:6px solid var(--trunk-outline); border-radius:65px 65px 45px 45px; background:linear-gradient(90deg,#789250,#b2c47d 8%,#92ad64 24%,#a8bd73 73%,#7d984f 94%,#658243); box-shadow:inset 4px 0 #c0d095,inset -5px 0 #54723f; }
+  .paint-scratch { position:absolute; width:12px; height:3px; background:#58723f; border-radius:50%; opacity:.65; transform:rotate(-12deg); }.scratch-one { left:18px; top:180px; box-shadow:1px 5px #c9d49c; }.scratch-two { right:14px; bottom:80px; width:17px; transform:rotate(19deg); }
+  .open-hatch { position:absolute; z-index:-1; left:0; top:0; width:100%; height:156px; overflow:visible; transform-origin:50% 90%; animation:hatch-settle .9s cubic-bezier(.2,.8,.3,1) both; }
+  .hatch-strut { position:absolute; top:89px; z-index:0; width:9px; height:78px; background:linear-gradient(90deg,#3d4b35,#aeb9a0 40%,#586b46 60%); border:2px solid #35452f; border-radius:4px; transform-origin:50% 100%; pointer-events:none; }.strut-left { left:7%; transform:rotate(15deg); }.strut-right { right:7%; transform:rotate(-15deg); }
+  .trunk-sign { position:absolute; z-index:3; top:39px; left:50%; display:flex; align-items:center; justify-content:center; width:min(610px,70%); min-height:82px; padding:13px 35px; border:5px solid #65492b; border-radius:16px 12px 19px 12px; background:repeating-linear-gradient(2deg,transparent 0 17px,#9a6b3220 18px 20px,transparent 21px 31px),linear-gradient(178deg,#f0ce8a,#dfb96e 48%,#c3934d); box-shadow:inset 0 3px #ffe5a9,inset 0 -4px #ba863f,0 5px #5e452d,0 8px #34442d38; transform:translateX(-50%) rotate(-1.1deg); transform-origin:50% 0; }
+  .trunk-sign::after { content:''; position:absolute; bottom:11px; right:51px; width:83px; height:2px; border-radius:50%; background:#9d71353b; box-shadow:-260px -40px #9d71351c; pointer-events:none; }
+  .trunk-sign h1 { position:relative; z-index:1; margin:0; font-size:clamp(24px,3.1vw,36px); line-height:1.3; font-weight:900; letter-spacing:-.045em; color:#503d23; text-align:center; text-shadow:0 2px #fce3a7; white-space:nowrap; }.trunk-sign h1 span { font-size:.64em; letter-spacing:-.035em; }
+  .sign-bolt { position:absolute; top:50%; width:10px; height:10px; border:2px solid #72552f; background:#b79559; border-radius:50%; box-shadow:inset 1px 1px #ebcd86; }.sign-bolt::after { content:''; position:absolute; left:2px; top:2px; width:3px; height:1px; background:#72552f; transform:rotate(-35deg); }.bolt-left { left:15px; }.bolt-right { right:15px; }
+  .sign-sprout { position:absolute; right:-23px; top:-23px; width:43px; height:43px; transform:rotate(18deg); }
+  .cargo-bay { position:relative; z-index:1; margin:0 32px; padding:18px 26px 30px; border:7px solid #435336; border-bottom-width:10px; border-radius:27px 27px 13px 13px; background:linear-gradient(90deg,#26382b30,transparent 20%,transparent 80%,#15251d45),repeating-linear-gradient(0deg,#344333 0 44px,#30402f 45px 47px); box-shadow:inset 0 12px 18px #19231a7a,inset 4px 0 #93a875,inset -4px 0 #263e2e,0 2px #bdd08c; }
+  .stock-heading { display:flex; align-items:center; justify-content:space-between; gap:16px; min-height:42px; margin:0 0 20px; padding:0 4px; color:#f4e2b9; }.stock-heading h2 { display:flex; align-items:center; gap:7px; margin:0; color:#f4e2b9; font-size:17px; font-weight:700; letter-spacing:.025em; }.stock-heading h2 svg { width:25px; height:25px; }.stock-heading h2>span { display:inline-grid; place-items:center; min-width:24px; height:25px; margin-left:3px; padding:0 6px; background:#1e2d22; border:1px solid #809268; border-radius:5px; color:#f7dc94; font:13px/1 var(--font-mono,monospace); }
+  .all-notes { display:inline-flex; align-items:center; gap:10px; min-height:40px; color:#eddfb9; font-size:13px; text-decoration:none; }.all-notes span { font-size:20px; transition:transform .2s ease; }.all-notes:hover { color:#fff4cb; }.all-notes:hover span { transform:translateX(3px); }.all-notes:focus-visible { outline:3px solid #f8ca62; outline-offset:4px; border-radius:3px; }
+  .seed-rack { display:grid; grid-template-columns:repeat(3,minmax(0,1fr)); gap:28px 18px; list-style:none; padding:0; margin:0; }.shelf-slot { position:relative; min-width:0; padding:0 0 15px; animation:packet-arrive .65s cubic-bezier(.2,.8,.3,1) var(--packet-delay) both; }
+  .seed-packet { position:relative; display:flex; flex-direction:column; height:100%; min-height:285px; padding:17px 17px 15px; border:3px solid #795d35; border-radius:7px 11px 6px 8px; background:repeating-linear-gradient(3deg,transparent 0 29px,#d5c38f0b 30px 32px),linear-gradient(120deg,#fff8db,#f4e9be 75%,#e9d69d); color:#4c422b; box-shadow:inset 0 0 0 3px #fff6d080,3px 5px #17281a45,0 10px 10px #15241a4d; transform:rotate(var(--packet-tilt)); transform-origin:50% 95%; transition:transform .24s cubic-bezier(.2,.8,.3,1),box-shadow .24s ease; }
+  .seed-packet::before { content:''; position:absolute; inset:7px; border:1px dashed #bba16c6e; border-radius:3px 6px 2px 5px; pointer-events:none; }.seed-packet:hover,.seed-packet:focus-within { transform:translateY(-7px) rotate(0deg); box-shadow:inset 0 0 0 3px #fff6d080,3px 9px #17281a35,0 15px 16px #15241a5c; }.seed-packet:focus-within { outline:3px solid #f8ca62; outline-offset:5px; }
+  .packet-clip { position:absolute; z-index:3; width:14px; height:27px; left:50%; top:-15px; transform:translateX(-50%) rotate(-7deg); border:2px solid #8b592c; border-radius:3px; background:linear-gradient(90deg,#c18b43,#e4b971 45%,#be843d); box-shadow:inset 0 1px #f0d79d,1px 2px #38271355; pointer-events:none; }.packet-clip::after { content:''; position:absolute; height:11px; width:1px; left:5px; top:2px; background:#8b592c; }
+  .packet-top { display:flex; align-items:center; justify-content:space-between; gap:6px; min-height:35px; margin-bottom:13px; color:#7e6b43; }.packet-number { font:700 17px/1 var(--font-mono,monospace); color:#79904d; }.packet-leaf { width:40px; height:30px; margin-left:auto; }.packet-top time { color:#806d46; font-size:11px; line-height:1.5; white-space:nowrap; }
+  .seed-packet h3 { margin:0 0 12px; color:#453b27; font-size:20px; font-weight:800; line-height:1.6; letter-spacing:-.025em; }.seed-packet h3 a { color:inherit; text-decoration:none; }.seed-packet h3 a::after { content:''; position:absolute; z-index:1; inset:0; border-radius:7px; }.seed-packet h3 a:focus-visible { outline:none; }.seed-packet:hover h3 a { color:#4f6b2c; }
+  .packet-description { margin:0 0 20px; color:#76633f; font-size:13px; line-height:1.85; }.packet-bottom { display:flex; align-items:center; justify-content:space-between; gap:8px; padding-top:14px; margin-top:auto; border-top:1px solid #bda87577; }.packet-tags { display:flex; flex-wrap:wrap; gap:4px 10px; }.packet-tags span,.packet-tags a { color:#698146; font-size:11px; font-weight:600; text-decoration:none; }.packet-tags a { position:relative; z-index:2; }.packet-tags a:hover { color:#3c5925; text-decoration:underline; }.packet-tags span { pointer-events:none; }.read-arrow { color:#6d8149; font-size:24px; line-height:1; transition:transform .2s ease; }.seed-packet:hover .read-arrow { transform:translate(2px,-2px); }
+  .wood-shelf { position:absolute; z-index:3; height:16px; left:-6px; right:-6px; bottom:-1px; border:3px solid #56452d; border-radius:3px 5px 4px 3px; background:repeating-linear-gradient(1deg,transparent 0 5px,#72532c3b 6px 7px),linear-gradient(#bd9658,#9a733e); box-shadow:0 6px #16251c55,inset 0 2px #dbb274; pointer-events:none; }.wood-shelf i { position:absolute; top:3px; width:4px; height:4px; border-radius:50%; background:#61492a; box-shadow:0 1px #d6b575; }.wood-shelf i:first-child { left:9px; }.wood-shelf i:last-child { right:9px; }
+  .rim-rivet { position:absolute; width:7px; height:7px; border:1px solid #34462e; border-radius:50%; background:#92a575; box-shadow:inset 0 1px #b9c99b; }.rivet-a { top:10px; left:9px; }.rivet-b { top:10px; right:9px; }.rivet-c { bottom:12px; left:9px; }.rivet-d { bottom:12px; right:9px; }
+  .rear-panel { position:relative; z-index:1; display:flex; align-items:center; justify-content:center; gap:22px; height:87px; margin:0 15px; background:linear-gradient(#a6ba71,#8ca15c 66%,#748c4c); border:5px solid var(--trunk-outline); border-top:0; border-bottom-width:3px; border-radius:0 0 30px 30px; box-shadow:inset 0 4px #c2cf92; }.rear-panel::before { content:''; position:absolute; left:11%; right:11%; top:20px; height:2px; background:#72894e; box-shadow:0 2px #c0cf8b; pointer-events:none; }
+  .license-plate { position:relative; z-index:1; display:inline-flex; align-items:center; justify-content:center; gap:19px; min-width:174px; min-height:47px; margin-top:4px; padding:4px 13px; border:3px solid #47503a; border-radius:6px; background:linear-gradient(#f9eac2,#e0d198); color:#516340; font:900 25px/1 var(--font-mono,monospace); letter-spacing:.16em; box-shadow:inset 0 0 0 2px #c5b481,0 3px #3a4c3238; transition:transform .15s ease,background .15s ease; }.license-plate:hover { transform:rotate(-1deg) translateY(-1px); background:#fff0bf; }.license-plate:active { transform:rotate(1deg) translateY(2px); }.license-plate:focus-visible { outline:3px solid #fff0ac; outline-offset:4px; }.plate-screw { width:4px; height:4px; background:#61684d; border-radius:50%; flex:0 0 4px; box-shadow:0 1px #fff6d5; }
+  .car-key { position:absolute; z-index:2; left:calc(50% + 110px); top:24px; width:40px; height:40px; transform:rotate(14deg); transform-origin:60% 25%; filter:drop-shadow(1px 2px #4253325c); animation:key-sway 7s ease-in-out infinite; pointer-events:none; }.rear-grooves { position:absolute; left:14%; display:grid; gap:5px; width:13%; }.rear-grooves i { height:3px; border-radius:3px; background:#647d45; box-shadow:0 1px #bdd08b; }
+  .tail-light { position:absolute; top:15px; display:grid; grid-template-rows:2fr 1fr; width:51px; height:56px; overflow:hidden; padding:3px; border:3px solid #4e4a2f; border-radius:12px 9px 9px 12px; background:#6b6340; box-shadow:2px 3px #52683b; }.tail-light-left { left:3%; transform:rotate(3deg); }.tail-light-right { right:3%; transform:rotate(-3deg); }.tail-light i:first-child { border-bottom:2px solid #795737; border-radius:5px 4px 0 0; background:repeating-linear-gradient(90deg,transparent 0 5px,#752e282e 6px 7px),linear-gradient(110deg,#e5895e,#ae4737); box-shadow:inset 0 3px #ffc39977; }.tail-light i:last-child { border-radius:0 0 3px 4px; background:repeating-linear-gradient(90deg,transparent 0 5px,#78572f2e 6px 7px),linear-gradient(#f9d489,#dbaf57); }
+  .chrome-bumper { position:relative; z-index:2; display:flex; justify-content:space-between; align-items:center; height:30px; margin:-13px 2px 0; padding:0 12%; border:4px solid #424c39; border-radius:9px 9px 17px 17px; background:linear-gradient(#ecedcd 0 16%,#a7b19a 17% 39%,#d5d9bd 40% 55%,#7e8d79 56% 75%,#adb7a0 76%); box-shadow:0 6px #2e422b3b; }.chrome-bumper span { height:28px; width:20px; border:3px solid #3f4b37; border-radius:4px; background:#6b7d61; }
+  .rear-wheel { position:absolute; z-index:-2; bottom:6px; width:86px; height:70px; border:6px solid #27372b; border-radius:9px 10px 24px 25px; background:repeating-linear-gradient(90deg,#364236 0 9px,#29382c 10px 13px); box-shadow:inset 0 -5px #18281d; }.wheel-left { left:6%; }.wheel-right { right:6%; }
+  .empty-trunk { display:grid; place-items:center; align-content:center; min-height:260px; color:#ded4af; text-align:center; }.empty-trunk svg { width:55px; height:55px; margin-bottom:16px; }.empty-trunk p { margin:0; font-size:15px; }
+  .is-rattling .trunk-sign { animation:sign-rattle .6s ease; }.is-rattling .car-key { animation:key-rattle .6s ease; }.is-rattling .tail-light i:first-child { background:#f9a26f; box-shadow:0 0 16px #e59a6980,inset 0 2px #ffe5b1; }
+  @keyframes hatch-settle { from { opacity:.7; transform:translateY(-14px) rotateX(8deg); } to { opacity:1; transform:translateY(0) rotateX(0); } }
+  @keyframes packet-arrive { from { opacity:0; transform:translateY(12px); } to { opacity:1; transform:translateY(0); } }
+  @keyframes key-sway { 0%,100% { transform:rotate(12deg); } 50% { transform:rotate(20deg); } }
+  @keyframes sign-rattle { 0%,100% { transform:translateX(-50%) rotate(-1.1deg); } 25% { transform:translateX(-50%) rotate(1deg); } 55% { transform:translateX(-50%) rotate(-2.5deg); } 80% { transform:translateX(-50%) rotate(.3deg); } }
+  @keyframes key-rattle { 0%,100% { transform:rotate(14deg); } 25% { transform:rotate(-13deg); } 60% { transform:rotate(30deg); } 80% { transform:rotate(5deg); } }
+  @media (max-width:900px) {
+    .dave-trunk { padding-top:111px; }.open-hatch { height:141px; }.trunk-sign { top:35px; min-height:76px; width:73%; }.trunk-sign h1 { font-size:29px; }.van-body { top:105px; }.cargo-bay { margin-inline:25px; padding-inline:20px; }.seed-rack { gap:24px 15px; }.seed-packet { padding-inline:14px; min-height:305px; }.seed-packet h3 { font-size:18px; }.packet-top { flex-wrap:wrap; gap:4px; }.packet-top time { width:100%; }.packet-leaf { height:25px; }.packet-description { font-size:12px; }
+  }
+  @media (max-width:720px) {
+    .dave-trunk { padding-top:81px; filter:drop-shadow(0 8px 5px #2d432d24); }.open-hatch { height:106px; }.trunk-sign { top:26px; width:86%; min-height:59px; padding:9px 23px; border-width:4px; border-radius:10px 9px 12px 8px; box-shadow:inset 0 2px #ffe5a9,inset 0 -3px #ba863f,0 4px #5e452d; }.trunk-sign h1 { font-size:clamp(22px,5vw,30px); }.sign-bolt { width:8px; height:8px; }.bolt-left { left:8px; }.bolt-right { right:8px; }.sign-sprout { width:32px; height:32px; right:-10px; top:-18px; }.van-body { top:79px; border-width:4px; border-radius:31px 31px 26px 26px; }.hatch-strut { top:63px; height:47px; width:7px; }
+    .cargo-bay { margin-inline:13px; padding:13px 15px 23px; border-width:5px; border-bottom-width:8px; border-radius:18px 18px 8px 8px; }.stock-heading { min-height:38px; margin-bottom:18px; padding:0; gap:10px; }.stock-heading h2 { font-size:15px; gap:4px; }.stock-heading h2 svg { width:22px; height:22px; }.stock-heading h2>span { font-size:11px; min-width:20px; height:22px; padding-inline:4px; }.all-notes { gap:5px; font-size:12px; }.all-notes span { font-size:18px; }
+    .seed-rack { grid-template-columns:1fr; gap:25px; }.seed-packet { min-height:0; padding:15px 18px 16px; transform:rotate(calc(var(--packet-tilt) * .45)); }.packet-top { flex-wrap:nowrap; margin-bottom:8px; min-height:30px; }.packet-top time { width:auto; font-size:11px; }.packet-number { font-size:16px; }.packet-leaf { width:35px; height:27px; }.seed-packet h3 { font-size:19px; line-height:1.6; margin-bottom:9px; }.packet-description { font-size:13.5px; line-height:1.8; margin-bottom:14px; }.packet-bottom { padding-top:10px; }.wood-shelf { left:-4px; right:-4px; height:15px; }
+    .rear-panel { height:79px; margin-inline:5px; border-width:4px; border-top:0; border-radius:0 0 22px 22px; }.tail-light { width:30px; height:46px; top:15px; padding:2px; border-width:2px; border-radius:6px; }.tail-light-left { left:4%; }.tail-light-right { right:4%; }.license-plate { min-width:140px; min-height:43px; gap:12px; font-size:23px; letter-spacing:.14em; }.car-key { left:calc(50% + 70px); top:30px; width:31px; height:31px; }.rear-grooves { display:none; }.chrome-bumper { margin-inline:0; height:26px; border-width:3px; padding-inline:18%; }.chrome-bumper span { width:15px; height:25px; border-width:2px; }.rear-wheel { width:56px; height:63px; bottom:11px; border-width:4px; border-radius:8px 8px 17px 17px; }.wheel-left { left:9%; }.wheel-right { right:9%; }.van-shadow { bottom:0; height:30px; }.empty-trunk { min-height:210px; }.empty-trunk p { font-size:13px; }.paint-scratch { display:none; }
+  }
+  @media (max-width:370px) { .cargo-bay { padding-inline:10px; }.trunk-sign h1 { font-size:21px; }.stock-heading h2 svg { display:none; }.seed-packet { padding-inline:15px; }.seed-packet h3 { font-size:18px; }.packet-top time { font-size:10px; } }
+  @media (prefers-reduced-motion:reduce) { .open-hatch,.shelf-slot { animation:none; }.car-key { animation-duration:18s; }.seed-packet,.read-arrow,.all-notes span,.license-plate { transition:none; }.seed-packet:hover,.seed-packet:focus-within { transform:rotate(var(--packet-tilt)); } }
+</style>
+
+<script>
+  const trunkCleanups = new Set<() => void>();
+  function initializeTrunks() {
+    document.querySelectorAll<HTMLElement>('[data-dave-trunk]').forEach((trunk) => {
+      if (trunk.dataset.ready === 'true') return;
+      const button = trunk.querySelector<HTMLButtonElement>('[data-trunk-knock]');
+      const status = trunk.querySelector<HTMLElement>('[data-knock-status]');
+      if (!button) return;
+      trunk.dataset.ready = 'true';
+      let timer = 0;
+      let frame = 0;
+      let knocks = 0;
+      const onKnock = () => {
+        window.clearTimeout(timer);
+        if (frame) cancelAnimationFrame(frame);
+        trunk.classList.remove('is-rattling');
+        frame = requestAnimationFrame(() => { trunk.classList.add('is-rattling'); frame = 0; });
+        trunk.dataset.knocks = String(++knocks);
+        if (status) status.textContent = knocks % 2 ? '咚咚，后备箱里都是新鲜笔记！' : '咚咚，戴夫的后备箱装得稳稳的。';
+        timer = window.setTimeout(() => { trunk.classList.remove('is-rattling'); }, 650);
+      };
+      button.addEventListener('click', onKnock);
+      const cleanup = () => {
+        window.clearTimeout(timer); if (frame) cancelAnimationFrame(frame);
+        button.removeEventListener('click', onKnock); trunk.classList.remove('is-rattling');
+        delete trunk.dataset.ready; trunkCleanups.delete(cleanup);
+      };
+      trunkCleanups.add(cleanup);
+    });
+  }
+  function cleanupTrunks() { for (const cleanup of trunkCleanups) cleanup(); }
+  initializeTrunks();
+  document.addEventListener('astro:page-load', initializeTrunks);
+  document.addEventListener('astro:before-swap', cleanupTrunks);
+  window.addEventListener('pagehide', cleanupTrunks);
+  window.addEventListener('pageshow', initializeTrunks);
+</script>

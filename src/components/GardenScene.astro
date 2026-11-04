@@ -1,0 +1,64 @@
+---
+import { url } from '../lib/posts';
+interface Props { home?: boolean; }
+const { home = false } = Astro.props;
+---
+<div class="garden-scene" data-garden-scene aria-hidden="true">
+  <div class="garden-painting" style={`background-image: url("${url('garden/garden-backdrop.webp')}")`}></div>
+  <svg class="cloud cloud-one" viewBox="0 0 220 90"><path d="M25 73C-2 72 0 37 29 35C24 5 72-3 87 24C105 2 144 14 145 38C181 17 209 38 202 56C233 63 221 83 196 81Z" fill="#fffbe9" /></svg>
+  <svg class="cloud cloud-two" viewBox="0 0 220 90"><path d="M25 73C-2 72 0 37 29 35C24 5 72-3 87 24C105 2 144 14 145 38C181 17 209 38 202 56C233 63 221 83 196 81Z" fill="#fffbe9" /></svg>
+  <div class="garden-vignette"></div>
+</div>
+{home && <div class="dave-friend" data-dave-friend>
+  <button class="dave-hello" type="button" data-dave-hello aria-label="和戴夫打个招呼" title="和戴夫打个招呼">
+    <img src={url('garden/dave.webp')} alt="" width="360" height="540" fetchpriority="high" />
+  </button>
+  <p class="dave-bubble" data-dave-bubble role="status" hidden></p>
+</div>}
+<style>
+  .garden-scene { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; background: #c5e3d6; }
+  .garden-painting { position: absolute; inset: 0; background-size: cover; background-position: center bottom; }
+  .garden-vignette { position: absolute; inset: 0; background: linear-gradient(#e9f7da10, transparent 48%, #416a261a); }
+  .cloud { position: absolute; width: 200px; opacity: .68; filter: drop-shadow(0 4px 0 #71a8a31a); animation: cloud-drift 64s ease-in-out infinite alternate; }
+  .cloud-one { top: 8%; left: 8%; }
+  .cloud-two { width: 140px; top: 17%; right: 6%; animation-duration: 89s; animation-delay: -22s; opacity: .45; }
+  .dave-friend { position: absolute; z-index: 6; top: 280px; left: max(8px, calc(50% - 670px)); width: 240px; }
+  .dave-hello { display: block; width: 100%; border: 0; padding: 0; background: transparent; transform-origin: 50% 95%; transition: transform .2s ease; filter: drop-shadow(0 8px 3px #2b411d30); }
+  .dave-hello img { display: block; width: 100%; height: auto; border-radius: 0; pointer-events: none; }
+  .dave-hello:hover { transform: rotate(-3deg) translateY(-4px); }
+  .dave-hello:active { transform: rotate(3deg) scale(.98); }
+  .dave-bubble { position: absolute; top: -45px; left: 96px; width: 210px; margin: 0; padding: 14px 17px; border: 3px solid #463722; border-radius: 47% 42% 44% 18% / 40% 42% 36% 32%; background: #fffbe9; color: #493c29; box-shadow: 3px 4px 0 #493c2926; font-size: 15px; font-weight: 700; line-height: 1.6; transform: rotate(2deg); }
+  .dave-bubble::after { content: ''; position: absolute; bottom: -12px; left: 18px; width: 16px; height: 16px; background: #fffbe9; border-left: 3px solid #463722; border-bottom: 3px solid #463722; transform: skewY(-30deg); }
+  :global(.garden-resting) .cloud { animation-play-state: paused; }
+  @keyframes cloud-drift { from { transform: translateX(-22px); } to { transform: translateX(92px); } }
+  @media (max-width: 1319px) { .dave-friend { top: 137px; left: 18px; width: 108px; } .dave-bubble { left: 72px; top: -15px; font-size: 13px; width: 185px; } }
+  @media (max-width: 600px) { .garden-painting { background-position: 56% bottom; } .dave-friend { top: 142px; left: 4px; width: 76px; } .dave-bubble { top: -14px; left: 59px; width: 170px; padding: 11px 13px; } .cloud { width: 130px; } }
+  @media (prefers-reduced-motion: reduce) { .cloud { animation-duration: 150s; } .dave-hello { transition-duration: .01ms; } }
+</style>
+<script>
+  let disposeGarden = () => {};
+  function initializeGarden() {
+    disposeGarden();
+    if (!document.querySelector('[data-garden-scene]')) return;
+    const hello = document.querySelector<HTMLButtonElement>('[data-dave-hello]');
+    const bubble = document.querySelector<HTMLElement>('[data-dave-bubble]');
+    if (bubble) bubble.hidden = true;
+    const lines = ['歪比巴卜！来翻翻新笔记。', '这篇不错，拿去看看！', '脑子留给思考，笔记放进后备箱。'];
+    let quote = 0;
+    let timer = 0;
+    const rest = () => document.body.classList.toggle('garden-resting', document.hidden);
+    const greet = () => {
+      if (!bubble) return;
+      bubble.textContent = lines[quote++ % lines.length]; bubble.hidden = false;
+      window.clearTimeout(timer); timer = window.setTimeout(() => { bubble.hidden = true; }, 3000);
+      hello?.animate([{ transform: 'rotate(0)' }, { transform: 'rotate(-5deg) translateY(-5px)' }, { transform: 'rotate(3deg)' }, { transform: 'rotate(0)' }], { duration: 500, easing: 'ease-out' });
+    };
+    hello?.addEventListener('click', greet); document.addEventListener('visibilitychange', rest); rest();
+    disposeGarden = () => { window.clearTimeout(timer); if (bubble) bubble.hidden = true; hello?.removeEventListener('click', greet); document.removeEventListener('visibilitychange', rest); };
+  }
+  initializeGarden();
+  document.addEventListener('astro:page-load', initializeGarden);
+  document.addEventListener('astro:before-swap', () => disposeGarden());
+  window.addEventListener('pagehide', () => disposeGarden());
+  window.addEventListener('pageshow', initializeGarden);
+</script>

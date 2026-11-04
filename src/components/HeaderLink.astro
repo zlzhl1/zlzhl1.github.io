@@ -9,9 +9,10 @@ const isActive = target === url() ? pathname === target : target !== '' && (path
 ---
 <a href={href} class:list={[className, { active: isActive }]} aria-current={isActive ? 'page' : undefined} {...props}><slot /></a>
 <style>
-  a { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 14px; border: 1px solid transparent; border-radius: 10px; color: #a9b5c1; font-size: 14px; line-height: 1.4; white-space: nowrap; text-decoration: none; transition: color .25s ease, background .25s ease, border-color .25s ease; }
-  a:hover { color: var(--ink); background: rgba(218, 235, 248, .04); }
-  a.active { color: #c6f3df; background: rgba(156, 229, 197, .065); border-color: rgba(156, 229, 197, .1); }
+  a { display: inline-flex; align-items: center; justify-content: center; min-height: 42px; padding: 7px 14px; border: 2px solid transparent; border-radius: 9px 11px 8px 10px; color: #4e3b22; font-size: 14px; font-weight: 700; line-height: 1.4; white-space: nowrap; text-decoration: none; transition: color .18s ease, background .18s ease, transform .18s ease; }
+  a:hover { color: #3b5928; background: #efd59b; transform: translateY(-1px); }
+  a.active { color: #fff9dc; background: linear-gradient(#7a9a4a, #577e37); border-color: #405c29; box-shadow: inset 0 2px #aec46d, 0 3px #5a552c; text-shadow: 0 1px #3a582a; }
   @media (max-width: 840px) { a { flex: 1; padding-inline: 10px; } }
-  @media (max-width: 420px) { a { padding-inline: 8px; font-size: 13px; } }
+  @media (max-width: 420px) { a { padding-inline: 6px; font-size: 13px; min-height: 40px; } }
+  @media (prefers-reduced-motion: reduce) { a:hover { transform: none; } }
 </style>

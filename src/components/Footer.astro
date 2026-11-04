@@ -4,20 +4,19 @@ import { url } from '../lib/posts';
 const today = new Date();
 ---
 <footer>
-  <div class="footer-copy"><p>把值得留下的，装进后备箱。</p><span>&copy; {today.getFullYear()} {SITE.author}</span></div>
+  <div class="footer-copy"><span>&copy; {today.getFullYear()} {SITE.author}</span></div>
   <nav aria-label="页脚链接">
     <a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">GitHub<span class="sr-only">（新窗口打开）</span><span aria-hidden="true">↗</span></a>
     <a href={url('rss.xml')}>RSS<span aria-hidden="true">↗</span></a>
   </nav>
 </footer>
 <style>
-  footer { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; width: min(1120px, calc(100% - 64px)); margin: auto auto 0; padding: 32px 0 36px; border-top: 1px solid var(--line); color: var(--muted); }
-  p { margin: 0 0 8px; font-size: 15px; color: #c0cbd5; }
-  .footer-copy > span { font-size: 12px; }
-  nav { display: flex; gap: 22px; }
-  nav a { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; color: var(--muted); font-size: 13px; text-decoration: none; }
-  nav a > span:last-child { font-size: 15px; color: #738493; transition: color .24s ease, transform .24s ease; }
-  nav a:hover { color: var(--ink); }
-  nav a:hover > span:last-child { color: var(--accent); transform: translate(2px, -2px); }
-  @media (max-width: 720px) { footer { width: calc(100% - 40px); flex-direction: column; align-items: flex-start; gap: 10px; padding: 26px 0; } }
+  footer { display: flex; align-items: center; justify-content: space-between; gap: 20px; width: min(1000px, calc(100% - 48px)); margin: 14px auto 30px; padding: 9px 20px; border: 2px solid #5d4c2b; border-radius: 10px 8px 12px 9px; background: linear-gradient(#bd995d, #a57d42); box-shadow: inset 0 2px #dfc183, 0 4px #48623250; color: #382f1c; }
+  .footer-copy > span { font-size: 12px; font-weight: 700; }
+  nav { display: flex; gap: 20px; }
+  nav a { display: inline-flex; align-items: center; gap: 7px; min-height: 40px; color: #3f3b20; font-size: 13px; font-weight: 700; text-decoration: none; }
+  nav a > span:last-child { font-size: 15px; color: #53642b; transition: transform .18s ease; }
+  nav a:hover { color: #f9f3c8; }
+  nav a:hover > span:last-child { transform: translate(2px, -2px); }
+  @media (max-width: 720px) { footer { width: calc(100% - 30px); gap: 10px; padding: 9px 13px; margin-bottom: 24px; } nav { gap: 13px; } .footer-copy > span { font-size: 11px; } }
 </style>

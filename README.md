@@ -1,6 +1,6 @@
 # 戴夫（Dave）的后备箱
 
-使用 [Astro](https://github.com/withastro/astro) 与 Markdown 构建的个人博客，采用深墨色阅读界面、薄荷色强调、玻璃导航和 AI 粒子背景。首页直接展示文章。文章和栏目由 GitHub 仓库管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。来源见 [模板记录](docs/astro-template.md)，视觉参考与验收要求见 [设计方向](docs/design-direction.md)。
+使用 [Astro](https://github.com/withastro/astro) 与 Markdown 构建的个人博客，采用《植物大战僵尸》式的明亮庭院、木质导航和戴夫后备箱。真实文章直接放在汽车货厢的纸卡层架里，可以收集阳光、发射豌豆、和戴夫打招呼或敲敲车牌。文章和栏目由 GitHub 仓库管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。设计见 [庭院方案](docs/garden-design.md)，生成插画与完整提示词见 [素材记录](docs/art-prompts-pvz.md)。
 
 ## 在 GitHub 管理内容
 
@@ -95,8 +95,9 @@ npm.cmd run verify
 
 - 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
 - 全局设计变量与基础排版：`src/styles/global.css`；页面工具样式：`src/styles/site.css`；本地 Atkinson 字体：`src/assets/fonts/`。这些样式已重新设计，并非官方模板原样外观。
-- 首页文章列表：`src/pages/index.astro` 和 `src/components/PostRow.astro` 的 `journal` 样式，直接展示真实文章。
-- AI 粒子背景：`src/components/ParticleBackdrop.astro`，以神经网络、训练收敛轨迹和 Agent 工作流组成一个整体。默认播放，无开关，不再读取旧的暂停偏好；系统减少动态效果时降低速度与位移，后台暂停。图案主要分布在两侧，手机简化图形，文章页降低背景强度。
+- 后备箱文章层架：`src/components/DaveTrunk.astro`，首页默认展示最多六篇真实文章，点击纸卡打开原文章。
+- 庭院、云朵与戴夫：`src/components/GardenScene.astro`；收集阳光、植物与豌豆互动：`src/components/GardenPlayground.astro`。旧粒子背景已停用。
+- 插画资源：`public/garden/`，由内置图像生成工具制作，WebP 合计约 591 KiB；提示词与透明度验收见素材记录。正文使用奶油纸张界面，保留代码复制、搜索、RSS 与归档。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。

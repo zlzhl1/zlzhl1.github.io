@@ -2,7 +2,8 @@
 import BaseHead from '../components/BaseHead.astro';
 import Header from '../components/Header.astro';
 import Footer from '../components/Footer.astro';
-import ParticleBackdrop from '../components/ParticleBackdrop.astro';
+import GardenScene from '../components/GardenScene.astro';
+import GardenPlayground from '../components/GardenPlayground.astro';
 import '../styles/site.css';
 
 interface Props { title?: string; description?: string; article?: boolean; home?: boolean; }
@@ -11,11 +12,12 @@ const { title, description, article = false, home = false } = Astro.props;
 <!doctype html>
 <html lang="zh-CN">
   <head><BaseHead title={title} description={description} article={article} /></head>
-  <body class:list={{ 'reading-page': article }}>
-    <ParticleBackdrop />
+  <body class:list={{ 'reading-page': article, 'garden-home': home }}>
+    <GardenScene home={home} />
     <a class="skip-link" href="#main">跳转到正文</a>
     <Header />
     <main id="main" class:list={{ 'article-page': article, 'home-page': home }}><slot /></main>
+    {home && <GardenPlayground />}
     <Footer />
   </body>
 </html>
