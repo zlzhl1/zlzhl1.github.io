@@ -56,4 +56,3 @@ Use case: illustration-story. Asset type: transparent character sprite for a Pla
 ```text
 Use case: illustration-story. Asset type: transparent character sprite for a Plants vs. Zombies themed website. A polished original illustration of the classic Plants vs. Zombies Sunflower: smiling warm brown round face, tiny black oval eyes and cheerful curved smile, large golden yellow and orange petals in a full ring, slender curved green stem, two broad green leaves at its base. Friendly recognizable classic PVZ1 2D hand-painted cartoon style, thick organic charcoal outlines, soft painterly cel shading and warm vivid colors. Entire plant including petals and leaves visible, centered with generous transparent margins. Isolated sprite on genuinely transparent alpha background. No flowerpot, no dirt, no floor, no scenery, no sun icon, no text, no logo, no watermark. Not 3D, not pixel art, not a generic vector icon.
 ```
-
