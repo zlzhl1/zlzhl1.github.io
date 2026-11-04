@@ -46,6 +46,10 @@ const { title, description, date, column } = Astro.props;
   .prose :global(ul), .prose :global(ol) { padding-left: 1.4em; margin: 0 0 1.5em; }
   .prose :global(li) { margin: .45em 0; }
   .prose :global(li::marker) { color: #6f8c43; }
+  .prose :global(table) { display: block; max-width: 100%; overflow-x: auto; overscroll-behavior-x: contain; margin: 25px 0 30px; border: 1px solid #c9b17b; border-radius: 8px; border-collapse: collapse; font-size: 14px; line-height: 1.75; }
+  .prose :global(th), .prose :global(td) { min-width: 92px; padding: 10px 13px; border: 1px solid #d9c79e; text-align: left; vertical-align: top; }
+  .prose :global(th) { color: #3e572d; background: #e6ebc4; font-weight: 700; }
+  .prose :global(tbody tr:nth-child(even)) { background: #f5eacb; }
   .article-back { margin-top: 45px; padding-top: 23px; border-top: 2px dashed #c1aa72; font-size: 14px; }
   .article-back a { display: inline-flex; min-height: 40px; align-items: center; padding: 4px 14px; border: 2px solid #839448; border-radius: 7px; background: #e6ebc4; text-decoration: none; color: #45642e; }
   .prose :global(pre) { position: relative; overflow-x: auto; margin: 28px 0; padding: 52px 20px 20px; font-size: 14px; line-height: 1.75; box-shadow: inset 0 3px #334c36; }

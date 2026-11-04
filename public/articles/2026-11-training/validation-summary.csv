@@ -1,0 +1,16 @@
+run,stage,step,validation_loss,observation,phase
+9b-domain,cpt,0,3.5667067,initial,original
+9b-domain,cpt,320,2.6693709,lowest_observed,original
+9b-domain,cpt,560,2.680589,last,original
+9b-domain,sft,1680,1.8587172,best,original
+9b-domain,sft,2529,2.1379104,last,original
+27b-new,cpt,168,2.59449935,best,new_execution
+27b-new,cpt,504,2.97325039,last,new_execution
+125b-a,sft,70,2.410002232,validation,micro8_original
+125b-b,sft,70,2.431856155,validation,micro8_original
+125b-a,sft,141,2.2453897,validation,micro8_original
+125b-b,sft,141,2.249397278,validation,micro8_original
+125b-a,sft,1686,1.975015283,best,micro32_resume
+125b-b,sft,1686,1.975782871,best,micro32_resume
+125b-a,sft,2529,1.988095999,last,micro32_resume
+125b-b,sft,2529,1.988671422,last,micro32_resume

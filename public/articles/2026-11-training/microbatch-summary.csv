@@ -1,0 +1,4 @@
+micro_batch,gradient_accumulation,global_batch,measured_steps,median_seconds,mean_seconds,min_seconds,max_seconds
+8,4,32,4,24.6897,25.3628,23.9203,28.1515
+16,2,32,4,16.6915,16.6853,15.6123,17.7462
+32,1,32,4,11.9964,16.7798,11.3884,31.7381
