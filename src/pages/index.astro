@@ -31,6 +31,11 @@ const posts = await getPosts();
   .entries-heading > a:hover { color: var(--accent); }
   .entries-heading > a span { display: inline-block; transition: transform .2s ease; }
   .entries-heading > a:hover span { transform: translate(2px, -2px); }
+  @media (min-width: 1100px) {
+    .home-intro { position: relative; isolation: isolate; }
+    .home-intro::before { content: ''; position: absolute; z-index: -1; top: -12px; bottom: -12px; left: -12px; width: 440px; max-width: 100%; background: linear-gradient(90deg, var(--bg) 0%, var(--bg) 76%, transparent); border-radius: 16px; filter: blur(10px); pointer-events: none; }
+    .entries-heading h2 { background: var(--bg); box-shadow: 0 0 14px 9px var(--bg); border-radius: 4px; }
+  }
   @media (max-width: 720px) {
     :global(main.home-page) { width: calc(100% - 40px); padding-top: 25px; padding-bottom: 38px; }
     .home-intro { margin-bottom: 22px; }

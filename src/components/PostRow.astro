@@ -42,8 +42,8 @@ const column = await getPostColumn(post);
   .entry-arrow { color: var(--muted); font-size: 20px; transition: transform .25s ease, color .25s ease; }
   .post-row:hover .entry-arrow { transform: translate(2px,-2px); color: var(--accent); }
   @media (max-width: 600px) { .post-row { padding: 23px; } .entry-top { margin-bottom: 19px; } .title { font-size: 20px; } }
-  .journal-row { display: grid; grid-template-columns: 100px minmax(0, 1fr) 24px; align-items: start; gap: 22px; padding: 25px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: rgba(11, 15, 20, .56); transition: background .25s ease; }
-  .journal-row:hover { transform: none; border-color: var(--line); background: linear-gradient(90deg, rgba(156, 229, 197, .045), rgba(11, 15, 20, .56)); }
+  .journal-row { display: grid; grid-template-columns: 100px minmax(0, 1fr) 24px; align-items: start; gap: 22px; padding: 25px 12px; border: 0; border-bottom: 1px solid var(--line); border-radius: 0; background: rgba(11, 15, 20, .72); transition: background .25s ease; }
+  .journal-row:hover { transform: none; border-color: var(--line); background: linear-gradient(90deg, rgba(156, 229, 197, .045), transparent), rgba(11, 15, 20, .72); }
   .journal-date { padding-top: 8px; font: 11px/1.6 var(--font-mono); color: var(--muted); white-space: nowrap; }
   .journal-main { min-width: 0; }
   .journal-row .title { font-size: 21px; line-height: 1.6; margin-bottom: 7px; }

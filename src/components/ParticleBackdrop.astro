@@ -1,4 +1,4 @@
-<div class="particle-backdrop" data-particle-backdrop data-paused="false" aria-hidden="true">
+<div class="particle-backdrop" data-particle-backdrop data-motifs="neural-network training agent-workflow" aria-hidden="true">
   <canvas class="particle-canvas"></canvas>
 </div>
 
@@ -11,16 +11,24 @@
     pointer-events: none;
     contain: strict;
     background:
-      radial-gradient(ellipse at 100% 22%, #70bfc80a, transparent 47%),
-      radial-gradient(ellipse at 0% 82%, #9ce5c507, transparent 38%);
+      radial-gradient(ellipse 290px 500px at 0% 35%, #78cfd017, transparent 85%),
+      radial-gradient(ellipse 300px 600px at 100% 45%, #9ce5c516, transparent 85%);
   }
   .particle-canvas { display: block; width: 100%; height: 100%; }
   @media print { .particle-backdrop { display: none; } }
 </style>
 
 <script>
-  type Point = { x: number; y: number; alpha: number; radius: number; proximity: number; distance: number };
+  type Vec = { x: number; y: number };
+  type Color = 'cyan' | 'mint' | 'warm';
+  type Glyph = 'token' | 'agent' | 'code' | 'memory' | 'response';
+  type Node = Vec & { color: Color; radius: number; glyph?: Glyph; ring?: boolean };
+  type Route = { points: Vec[]; lengths: number[]; length: number; color: Color; alpha: number; signals: number; dotted: boolean };
+  type Mapped = Vec & { mask: number; hot: number; distance: number };
+  const palette: Record<Color, string> = { cyan: '132, 218, 238', mint: '156, 239, 197', warm: '245, 190, 113' };
+  const compactWidth = 1100;
   const cleanups = new Set<() => void>();
+  const smooth = (value: number) => { const t = Math.max(0, Math.min(1, value)); return t * t * (3 - 2 * t); };
 
   function initializeBackdrops() {
     document.querySelectorAll<HTMLElement>('[data-particle-backdrop]').forEach((backdrop) => {
@@ -29,273 +37,283 @@
       const context = canvas?.getContext('2d');
       if (!canvas || !context) return;
       backdrop.dataset.ready = 'true';
-
-      const toggle = document.querySelector<HTMLButtonElement>('[data-particle-toggle]');
       const reduced = matchMedia('(prefers-reduced-motion: reduce)');
       const finePointer = matchMedia('(hover: hover) and (pointer: fine)');
-      // Follow the system by default; an explicit site preference takes priority.
-      let preference: boolean | null = null;
-      try {
-        const stored = localStorage.getItem('dave-particles-paused');
-        if (stored === 'true' || stored === 'false') preference = stored === 'true';
-      } catch { /* Storage may be unavailable. */ }
-      let paused = preference ?? reduced.matches;
       let width = 0;
       let height = 0;
+      let nodes: Node[] = [];
+      let routes: Route[] = [];
       let frame = 0;
-      let elapsed = 0;
       let previous = 0;
+      let elapsed = 0;
       let lastDraw = 0;
+      let cursorX = 0;
+      let cursorY = 0;
+      let targetCursorX = 0;
+      let targetCursorY = 0;
+      let interaction = 0;
+      let targetInteraction = 0;
       let pointerX = 0;
       let pointerY = 0;
       let targetX = 0;
       let targetY = 0;
-      let cursorX = 0;
-      let cursorY = 0;
-      let cursorTargetX = 0;
-      let cursorTargetY = 0;
-      let interaction = 0;
-      let targetInteraction = 0;
 
-      function readingFade(x: number) {
-        const edgeDistance = Math.abs(x / width - .5) * 2;
-        return .11 + .89 * Math.pow(Math.min(1, edgeDistance), 2.3);
+      function addRoute(points: Vec[], color: Color, alpha = .56, signals = 2, dotted = false) {
+        const lengths = [0];
+        for (let i = 1; i < points.length; i++) lengths.push(lengths[i - 1] + Math.hypot(points[i].x - points[i - 1].x, points[i].y - points[i - 1].y));
+        routes.push({ points, lengths, length: lengths.at(-1) || 1, color, alpha, signals, dotted });
+      }
+      function curve(a: Vec, b: Vec, c: Vec, d: Vec, color: Color, alpha = .56, signals = 2, dotted = false) {
+        const points: Vec[] = [];
+        for (let i = 0; i <= 28; i++) {
+          const t = i / 28;
+          const q = 1 - t;
+          points.push({ x: q ** 3 * a.x + 3 * q * q * t * b.x + 3 * q * t * t * c.x + t ** 3 * d.x, y: q ** 3 * a.y + 3 * q * q * t * b.y + 3 * q * t * t * c.y + t ** 3 * d.y });
+        }
+        addRoute(points, color, alpha, signals, dotted);
+      }
+      function link(a: Vec, b: Vec, color: Color, alpha = .56, signals = 2) { addRoute([a, b], color, alpha, signals); }
+      function node(x: number, y: number, color: Color, radius = 2.6, glyph?: Glyph, ring = false) {
+        const point: Node = { x, y, color, radius, glyph, ring };
+        nodes.push(point);
+        return point;
       }
 
-      function resetPointer(immediate = false) {
-        targetX = 0;
-        targetY = 0;
-        targetInteraction = 0;
-        if (immediate) {
-          pointerX = 0;
-          pointerY = 0;
-          interaction = 0;
+      function buildScene() {
+        nodes = [];
+        routes = [];
+        const mobile = width < compactWidth;
+        if (mobile) {
+          // Phones get a compact constellation rather than a scaled desktop.
+          const center = width - 59;
+          const layers = [
+            [node(width - 98, 151, 'cyan'), node(width - 98, 197, 'cyan')],
+            [node(center, 137, 'cyan'), node(center, 174, 'cyan'), node(center, 211, 'cyan')],
+            [node(width - 21, 151, 'mint'), node(width - 21, 197, 'mint')],
+          ];
+          for (let i = 0; i < layers.length - 1; i++) for (const a of layers[i]) for (const b of layers[i + 1]) link(a, b, i ? 'mint' : 'cyan', .68, 1);
+          const token = node(center, 106, 'cyan', 9, 'token');
+          const agent = node(width - 33, 281, 'mint', 11, 'agent');
+          const tool = node(width - 18, 367, 'cyan', 9, 'code');
+          const memory = node(width - 49, 443, 'mint', 9, 'memory');
+          const response = node(width - 22, 531, 'mint', 10, 'response');
+          link(token, layers[1][0], 'cyan', .65, 1);
+          curve(layers[2][1], { x: width - 7, y: 226 }, { x: width - 33, y: 240 }, agent, 'mint', .68, 2);
+          curve(agent, { x: width - 4, y: 306 }, { x: width - 3, y: 341 }, tool, 'cyan', .68, 2);
+          curve(tool, { x: width - 19, y: 412 }, { x: width - 47, y: 408 }, memory, 'mint', .62, 2);
+          curve(memory, { x: width - 70, y: 382 }, { x: width - 68, y: 304 }, agent, 'mint', .56, 2, true);
+          curve(memory, { x: width - 53, y: 480 }, { x: width - 20, y: 494 }, response, 'mint', .65, 2);
+          const lossY = Math.max(615, height * .77);
+          const lossA = { x: width - 80, y: lossY };
+          const lossB = node(width - 17, lossY + 72, 'warm', 3.1, undefined, true);
+          addRoute([{ x: width - 82, y: lossY - 6 }, { x: width - 82, y: lossY + 83 }, { x: width - 9, y: lossY + 83 }], 'cyan', .5, 0);
+          curve(lossA, { x: width - 69, y: lossY + 69 }, { x: width - 53, y: lossY + 68 }, lossB, 'mint', .74, 3);
+          curve(response, { x: width - 45, y: 576 }, { x: width - 71, y: lossY - 30 }, lossA, 'cyan', .48, 3, true);
+          curve({ x: width - 2, y: 76 }, { x: width - 6, y: 28 }, { x: width - 107, y: 34 }, token, 'cyan', .48, 4, true);
+        } else {
+          const span = Math.min(208, width * .17);
+          const left = 20;
+          const graphY = Math.max(158, height * .2);
+          const graphH = Math.min(220, height * .27);
+          const counts = [3, 4, 4, 2];
+          const layers = counts.map((count, layer) => Array.from({ length: count }, (_, index) => node(left + layer * span / 3, graphY + graphH * (.5 + (index - (count - 1) / 2) / 3.4), layer < 2 ? 'cyan' : 'mint')));
+          for (let i = 0; i < layers.length - 1; i++) for (const a of layers[i]) for (const b of layers[i + 1]) link(a, b, i < 1 ? 'cyan' : 'mint', .48, 2);
+          const token = node(left + span * .3, graphY - 58, 'cyan', 11, 'token');
+          curve(token, { x: token.x - 25, y: token.y + 45 }, { x: left, y: graphY - 10 }, layers[0][0], 'cyan', .65, 2, true);
+
+          // Training loss converges toward a small warm endpoint.
+          const lossTop = height * .64;
+          const lossBottom = Math.min(height - 76, lossTop + 180);
+          const lossLeft = 25;
+          const lossRight = left + span;
+          addRoute([{ x: lossLeft, y: lossTop - 12 }, { x: lossLeft, y: lossBottom + 22 }, { x: lossRight + 12, y: lossBottom + 22 }], 'cyan', .55, 0);
+          for (let i = 1; i <= 3; i++) link({ x: lossLeft - 4, y: lossTop + (lossBottom - lossTop) * i / 4 }, { x: lossLeft + 5, y: lossTop + (lossBottom - lossTop) * i / 4 }, 'cyan', .54, 0);
+          const lossStart = { x: lossLeft + 8, y: lossTop };
+          const lossEnd = node(lossRight, lossBottom, 'warm', 3.8, undefined, true);
+          curve(lossStart, { x: lossLeft + 41, y: lossBottom + 1 }, { x: lossRight - 68, y: lossBottom - 8 }, lossEnd, 'mint', .76, 5);
+          curve(layers[3][1], { x: left + span + 22, y: graphY + graphH + 60 }, { x: lossLeft - 12, y: lossTop - 70 }, lossStart, 'cyan', .48, 5, true);
+
+          const right = width - 21;
+          const coreX = width - span * .57;
+          const prompt = node(coreX - 19, height * .17, 'cyan', 11, 'token');
+          const agent = node(coreX, height * .34, 'mint', 13, 'agent');
+          const tool = node(right - 1, height * .49, 'cyan', 11, 'code');
+          const memory = node(width - span + 14, height * .52, 'mint', 11, 'memory');
+          const response = node(coreX + 12, height * .73, 'mint', 12, 'response');
+          const branch = node(coreX, height * .43, 'mint', 4.2, undefined, true);
+          curve(prompt, { x: prompt.x - 20, y: height * .23 }, { x: agent.x + 7, y: height * .27 }, agent, 'cyan', .67, 4);
+          link(agent, branch, 'mint', .7, 2);
+          curve(branch, { x: coreX + 45, y: branch.y }, { x: right - 1, y: tool.y - 37 }, tool, 'cyan', .66, 3);
+          curve(branch, { x: coreX - 49, y: branch.y }, { x: memory.x, y: memory.y - 33 }, memory, 'mint', .66, 3);
+          curve(tool, { x: right + 14, y: height * .37 }, { x: right + 6, y: height * .24 }, agent, 'cyan', .52, 5, true);
+          curve(memory, { x: memory.x - 12, y: height * .64 }, { x: response.x - 28, y: height * .64 }, response, 'mint', .64, 4);
+          curve(tool, { x: tool.x + 10, y: height * .64 }, { x: response.x + 38, y: height * .69 }, response, 'cyan', .64, 4);
+
+          // Dotted outer routes join the motifs into one circuit, not panels.
+          curve(layers[2][0], { x: width * .29, y: -62 }, { x: width * .77, y: -30 }, prompt, 'cyan', .55, 12, true);
+          curve(response, { x: width * .76, y: height + 65 }, { x: width * .27, y: height + 50 }, lossEnd, 'mint', .5, 12, true);
         }
       }
 
-      // Each row follows the same folded surface. Connections stay local;
-      // there is no random star field or quadratic neighbour search.
-      function pointAt(u: number, v: number, band: number, time: number): Point {
-        const mobile = width < 700;
-        const phase = time * .000055;
-        const bend = u * Math.PI * 2 - .8 + phase;
-        const twist = u * Math.PI * 2.6 + phase * .65 + band * 1.3;
-        const right = band === 0;
-        const centerX = right
-          ? width * (.91 + .115 * Math.sin(bend))
-          : width * (.045 + .12 * Math.sin(bend + 1.4));
-        const centerY = height * (-.2 + 1.43 * u + band * .13);
-        const spread = width * (mobile ? .24 : .16);
-        const baseX = centerX + v * spread * Math.cos(twist);
-        const baseY = centerY + v * height * .12 * Math.sin(twist) + Math.sin(bend * 1.7) * height * .035;
-        // The unshifted surface owns the reading mask: interaction cannot bring
-        // a bright edge particle into the central reading area.
-        const centerFade = readingFade(baseX);
-        let x = baseX + (mobile ? 0 : pointerX * (right ? 22 : -18));
-        let y = baseY + (mobile ? 0 : pointerY * 18);
+      function readingMask(point: Vec) {
+        if (width < compactWidth) {
+          const right = smooth((point.x / width - .61) / .3);
+          const top = 1 - smooth((point.y - 238) / 80);
+          return right * (.5 + top * .5);
+        }
+        const edge = Math.min(point.x, width - point.x) / width;
+        const sides = 1 - smooth((edge - .15) / .07);
+        const rim = Math.max(1 - smooth((point.y - 52) / 53), smooth((point.y - height + 62) / 54)) * .3;
+        return Math.max(sides, rim);
+      }
+      function mapPoint(point: Vec): Mapped {
+        const mask = readingMask(point);
+        const active = width >= compactWidth && !reduced.matches && finePointer.matches;
+        let x = point.x + (active ? pointerX * 14 : 0);
+        let y = point.y + (active ? pointerY * 10 : 0);
         const dx = x - cursorX;
         const dy = y - cursorY;
         const distance = Math.hypot(dx, dy);
-        const proximity = mobile ? 0 : Math.max(0, 1 - distance / 180) ** 2 * interaction;
-        if (distance > .01 && proximity > 0) {
-          const displacement = 16 * proximity * centerFade;
-          x += dx / distance * displacement;
-          y += dy / distance * displacement;
+        const hot = active ? Math.max(0, 1 - distance / 180) ** 2 * interaction : 0;
+        if (distance > .01) { x += dx / distance * 13 * hot * mask; y += dy / distance * 13 * hot * mask; }
+        return { x, y, mask, hot, distance };
+      }
+      function onRoute(route: Route, distance: number): Vec {
+        const at = ((distance % route.length) + route.length) % route.length;
+        let i = 1;
+        while (i < route.lengths.length - 1 && route.lengths[i] < at) i++;
+        const length = route.lengths[i] - route.lengths[i - 1];
+        const t = length > 0 ? (at - route.lengths[i - 1]) / length : 0;
+        return { x: route.points[i - 1].x + (route.points[i].x - route.points[i - 1].x) * t, y: route.points[i - 1].y + (route.points[i].y - route.points[i - 1].y) * t };
+      }
+      function drawGlyph(point: Mapped, glyph: Glyph, radius: number, color: string) {
+        context!.save(); context!.translate(point.x, point.y);
+        context!.strokeStyle = `rgba(${color},${.88 * point.mask})`;
+        context!.fillStyle = `rgba(${color},${.9 * point.mask})`;
+        context!.lineWidth = 1.15;
+        context!.scale(radius / 11, radius / 11); context!.beginPath();
+        if (glyph === 'token') {
+          context!.roundRect(-7, -6, 10, 4, 1); context!.roundRect(-4, 0, 11, 4, 1);
+          context!.moveTo(-6, 8); context!.lineTo(5, 8);
+        } else if (glyph === 'code') {
+          context!.moveTo(-3, -5); context!.lineTo(-8, 0); context!.lineTo(-3, 5);
+          context!.moveTo(3, -5); context!.lineTo(8, 0); context!.lineTo(3, 5);
+          context!.moveTo(1, -7); context!.lineTo(-1, 7);
+        } else if (glyph === 'memory') {
+          context!.ellipse(0, -5, 7, 3, 0, 0, Math.PI * 2);
+          context!.moveTo(-7, -5); context!.lineTo(-7, 5);
+          context!.ellipse(0, 5, 7, 3, 0, 0, Math.PI);
+          context!.moveTo(7, 5); context!.lineTo(7, -5);
+          context!.moveTo(-7, 0); context!.bezierCurveTo(-4, 4, 4, 4, 7, 0);
+        } else if (glyph === 'response') {
+          context!.moveTo(-7, -6); context!.lineTo(7, -6); context!.lineTo(7, 4); context!.lineTo(0, 4); context!.lineTo(-5, 8); context!.lineTo(-5, 4); context!.lineTo(-7, 4); context!.closePath();
+          context!.moveTo(-3, -2); context!.lineTo(3, -2); context!.moveTo(-3, 1); context!.lineTo(1, 1);
+        } else {
+          context!.moveTo(0, -6); context!.lineTo(6, 4); context!.lineTo(-6, 4); context!.closePath();
+          context!.moveTo(0, -6); context!.lineTo(0, 1); context!.moveTo(-6, 4); context!.lineTo(0, 1); context!.lineTo(6, 4);
         }
-        const ends = Math.sin(Math.PI * u) ** .5;
-        const depth = .68 + .32 * Math.cos(twist + v * .5);
-        const pulse = .85 + .15 * Math.sin(u * 13 + v * 2 - phase * 3);
-        const alpha = Math.min(.95, centerFade * ends * depth * pulse * (right ? .88 : .56) * (1 + proximity * .8));
-        return { x, y, alpha, radius: (.83 + depth * .62 + proximity * .45) * (mobile ? .9 : 1), proximity, distance };
+        context!.stroke();
+        if (glyph === 'agent') for (const [x, y] of [[0, -6], [-6, 4], [6, 4], [0, 1]]) { context!.beginPath(); context!.arc(x, y, 1.5, 0, Math.PI * 2); context!.fill(); }
+        context!.restore();
       }
 
       function draw(time: number) {
         if (!width || !height) return;
-        context!.clearRect(0, 0, width, height);
-        const mobile = width < 700;
-        const columns = mobile ? 26 : 43;
-        const rows = mobile ? 6 : 8;
-        backdrop.dataset.particles = String(columns * rows * 2);
-        backdrop.dataset.pointerActive = String(!mobile && finePointer.matches && interaction > .05);
-        backdrop.style.setProperty('--pointer-x', `${Math.round(cursorX)}px`);
-        backdrop.style.setProperty('--pointer-y', `${Math.round(cursorY)}px`);
-
-        for (let band = 0; band < 2; band++) {
-          const color = band === 0 ? '144, 209, 218' : '156, 229, 197';
-          const points: Point[][] = [];
-          const nearby: Point[] = [];
-          for (let row = 0; row < rows; row++) {
-            const v = (row / (rows - 1) - .5) * 2;
-            const line: Point[] = [];
-            for (let col = 0; col < columns; col++) {
-              line.push(pointAt(col / (columns - 1), v, band, time));
-            }
-            points.push(line);
+        context!.clearRect(0, 0, width, height); context!.lineCap = 'round';
+        let particleCount = 0;
+        const nearby: { point: Mapped; color: string }[] = [];
+        const dot = (point: Mapped, radius: number, color: string, alpha: number, halo = false) => {
+          if (point.mask < .01 || point.x < -12 || point.x > width + 12 || point.y < -12 || point.y > height + 12) return;
+          if (halo) { context!.beginPath(); context!.arc(point.x, point.y, radius * 2.7, 0, Math.PI * 2); context!.fillStyle = `rgba(${color},${alpha * point.mask * .12})`; context!.fill(); }
+          context!.beginPath(); context!.arc(point.x, point.y, radius, 0, Math.PI * 2);
+          context!.fillStyle = `rgba(${color},${Math.min(1, alpha * point.mask * (1 + point.hot))})`; context!.fill(); particleCount++;
+        };
+        for (let routeIndex = 0; routeIndex < routes.length; routeIndex++) {
+          const route = routes[routeIndex]; const color = palette[route.color];
+          if (!route.dotted) for (let i = 1; i < route.points.length; i++) {
+            const a = mapPoint(route.points[i - 1]); const b = mapPoint(route.points[i]);
+            const mask = Math.min(a.mask, b.mask);
+            if (mask < .01) continue;
+            context!.beginPath(); context!.moveTo(a.x, a.y); context!.lineTo(b.x, b.y); context!.lineWidth = 1.05;
+            context!.strokeStyle = `rgba(${color},${route.alpha * mask * (1 + Math.max(a.hot, b.hot) * .4)})`; context!.stroke();
           }
-
-          context!.lineWidth = .75;
-          for (let row = 0; row < rows; row++) {
-            for (let col = 0; col < columns; col++) {
-              const point = points[row][col];
-              const previousPoint = col > 0 ? points[row][col - 1] : null;
-              if (previousPoint) {
-                context!.beginPath();
-                context!.moveTo(previousPoint.x, previousPoint.y);
-                context!.lineTo(point.x, point.y);
-                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, previousPoint.alpha) * .3})`;
-                context!.stroke();
-              }
-              // Sparse cross-lines reveal a mesh without turning the background into a grid.
-              if (row > 0 && col % 3 === 0) {
-                const across = points[row - 1][col];
-                context!.beginPath();
-                context!.moveTo(across.x, across.y);
-                context!.lineTo(point.x, point.y);
-                context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, across.alpha) * .18})`;
-                context!.stroke();
-              }
-              if (point.proximity > .12 && point.alpha > .15) {
-                context!.beginPath();
-                context!.arc(point.x, point.y, point.radius * 3.2, 0, Math.PI * 2);
-                context!.fillStyle = `rgba(${color},${point.alpha * point.proximity * .1})`;
-                context!.fill();
-                // Retain only the two nearest eligible nodes in each ribbon.
-                // Four short cursor links at most; never a network of all pairs.
-                if (point.distance < 145) {
-                  const slot = nearby.findIndex((candidate) => point.distance < candidate.distance);
-                  if (slot === -1) nearby.push(point);
-                  else nearby.splice(slot, 0, point);
-                  if (nearby.length > 2) nearby.pop();
-                }
-              }
-              context!.beginPath();
-              context!.arc(point.x, point.y, point.radius, 0, Math.PI * 2);
-              context!.fillStyle = `rgba(${color},${point.alpha})`;
-              context!.fill();
-            }
-          }
-          const cursorFade = readingFade(cursorX);
-          if (!mobile && cursorFade > .3 && interaction > .05) {
-            for (const point of nearby) {
-              context!.beginPath();
-              context!.moveTo(cursorX, cursorY);
-              context!.lineTo(point.x, point.y);
-              context!.strokeStyle = `rgba(${color},${Math.min(point.alpha, cursorFade) * point.proximity * .32})`;
-              context!.stroke();
-            }
+          const step = route.dotted ? 12 : 38;
+          for (let distance = step * .5; distance < route.length; distance += step) dot(mapPoint(onRoute(route, distance)), route.dotted ? 1.35 : 1.15, color, route.dotted ? .74 : .7);
+          const speed = reduced.matches ? .012 : .035;
+          for (let i = 0; i < route.signals; i++) dot(mapPoint(onRoute(route, time * speed + i * route.length / route.signals + routeIndex * 19)), width < compactWidth ? 2.1 : 2.35, color, .96, true);
+        }
+        for (const anchor of nodes) {
+          const point = mapPoint(anchor); const color = palette[anchor.color];
+          if (point.mask < .01) continue;
+          if (anchor.glyph || anchor.ring) {
+            context!.beginPath(); context!.arc(point.x, point.y, anchor.radius + (anchor.glyph ? 4 : 3), 0, Math.PI * 2);
+            context!.fillStyle = `rgba(11, 15, 20,${point.mask * .95})`; context!.fill();
+            context!.strokeStyle = `rgba(${color},${point.mask * (.72 + point.hot * .25)})`; context!.lineWidth = 1.2; context!.stroke();
+            if (anchor.glyph) drawGlyph(point, anchor.glyph, anchor.radius, color); else dot(point, anchor.radius, color, .95, true);
+          } else dot(point, anchor.radius + point.hot * .7, color, .86, point.hot > .2);
+          if (point.hot > .15 && point.mask > .4 && point.distance < 150) {
+            const index = nearby.findIndex((entry) => point.distance < entry.point.distance);
+            if (index < 0) nearby.push({ point, color }); else nearby.splice(index, 0, { point, color });
+            if (nearby.length > 4) nearby.pop();
           }
         }
+        const cursorMask = readingMask({ x: cursorX, y: cursorY });
+        if (cursorMask > .35) for (const { point, color } of nearby) {
+          context!.beginPath(); context!.moveTo(cursorX, cursorY); context!.lineTo(point.x, point.y);
+          context!.lineWidth = .8; context!.strokeStyle = `rgba(${color},${.35 * point.hot * cursorMask})`; context!.stroke();
+        }
+        backdrop.dataset.particles = String(particleCount);
+        backdrop.dataset.pointerActive = String(width >= compactWidth && !reduced.matches && finePointer.matches && interaction > .05);
+        backdrop.style.setProperty('--pointer-x', `${Math.round(cursorX)}px`); backdrop.style.setProperty('--pointer-y', `${Math.round(cursorY)}px`);
       }
 
-      function shouldAnimate() { return !paused && !document.hidden; }
+      function resetPointer(immediate = false) { targetInteraction = 0; targetX = 0; targetY = 0; if (immediate) { interaction = 0; pointerX = 0; pointerY = 0; } }
       function tick(now: number) {
-        frame = 0;
-        if (!shouldAnimate()) return;
-        if (previous) elapsed += Math.min(now - previous, 80);
-        previous = now;
+        frame = 0; if (document.hidden) return;
+        if (previous) elapsed += Math.min(now - previous, 80); previous = now;
         if (now - lastDraw >= 1000 / 24) {
-          pointerX += (targetX - pointerX) * .1;
-          pointerY += (targetY - pointerY) * .1;
-          cursorX += (cursorTargetX - cursorX) * .18;
-          cursorY += (cursorTargetY - cursorY) * .18;
-          interaction += (targetInteraction - interaction) * .14;
-          draw(elapsed);
-          lastDraw = now;
+          pointerX += (targetX - pointerX) * .1; pointerY += (targetY - pointerY) * .1;
+          cursorX += (targetCursorX - cursorX) * .18; cursorY += (targetCursorY - cursorY) * .18;
+          interaction += (targetInteraction - interaction) * .14; draw(elapsed); lastDraw = now;
         }
         frame = requestAnimationFrame(tick);
       }
       function updateMotion() {
-        paused = preference ?? reduced.matches;
-        if (document.hidden) resetPointer(true);
-        else if (paused) resetPointer();
-        backdrop.dataset.paused = String(paused);
-        backdrop.dataset.running = String(shouldAnimate());
-        if (toggle) {
-          toggle.hidden = false;
-          toggle.setAttribute('aria-pressed', String(paused));
-          const label = paused ? '开启背景动效' : '暂停背景动效';
-          toggle.setAttribute('aria-label', label);
-          toggle.title = label;
-        }
-        if (shouldAnimate()) {
-          if (!frame) frame = requestAnimationFrame(tick);
-        } else {
-          if (frame) cancelAnimationFrame(frame);
-          frame = 0;
-          previous = 0;
-          lastDraw = 0;
-        }
-      }
-      function setPaused(value: boolean) {
-        preference = value;
-        try { localStorage.setItem('dave-particles-paused', String(value)); } catch { /* Optional preference. */ }
-        updateMotion();
-      }
-      function onToggle() { setPaused(!paused); }
-      function onExternalMotion(event: Event) {
-        const detail = (event as CustomEvent<{ paused?: unknown }>).detail;
-        if (typeof detail?.paused === 'boolean') setPaused(detail.paused);
+        backdrop.dataset.running = String(!document.hidden);
+        if (document.hidden) { resetPointer(true); if (frame) cancelAnimationFrame(frame); frame = 0; previous = 0; lastDraw = 0; }
+        else if (!frame) frame = requestAnimationFrame(tick);
       }
       function onPointerMove(event: PointerEvent) {
-        if (!shouldAnimate() || !finePointer.matches || width < 700 || event.pointerType === 'touch') return;
-        targetX = event.clientX / width - .5;
-        targetY = event.clientY / height - .5;
-        cursorTargetX = event.clientX;
-        cursorTargetY = event.clientY;
-        if (targetInteraction === 0 && interaction < .05) {
-          cursorX = cursorTargetX;
-          cursorY = cursorTargetY;
-        }
-        targetInteraction = 1;
+        if (document.hidden || reduced.matches || !finePointer.matches || width < compactWidth || event.pointerType === 'touch') return;
+        targetX = event.clientX / width - .5; targetY = event.clientY / height - .5;
+        targetCursorX = event.clientX; targetCursorY = event.clientY;
+        if (targetInteraction === 0 && interaction < .05) { cursorX = targetCursorX; cursorY = targetCursorY; } targetInteraction = 1;
       }
       function onPointerLeave() { resetPointer(); }
-      function onPointerModeChange() { if (!finePointer.matches) resetPointer(true); }
+      function onPointerModeChange() { if (reduced.matches || !finePointer.matches) resetPointer(true); }
       function resize() {
-        width = backdrop.clientWidth;
-        height = backdrop.clientHeight;
-        if (width < 700) resetPointer(true);
-        const dpr = Math.min(devicePixelRatio || 1, width < 700 ? 1.5 : 2);
-        canvas!.width = Math.round(width * dpr);
-        canvas!.height = Math.round(height * dpr);
-        context!.setTransform(dpr, 0, 0, dpr, 0, 0);
-        draw(elapsed);
+        width = backdrop.clientWidth; height = backdrop.clientHeight; if (width < compactWidth) resetPointer(true);
+        const dpr = Math.min(devicePixelRatio || 1, width < compactWidth ? 1.5 : 2);
+        canvas!.width = Math.round(width * dpr); canvas!.height = Math.round(height * dpr); context!.setTransform(dpr, 0, 0, dpr, 0, 0); buildScene(); draw(elapsed);
       }
-
-      const observer = new ResizeObserver(resize);
-      observer.observe(backdrop);
-      toggle?.addEventListener('click', onToggle);
-      document.addEventListener('particle-motion-change', onExternalMotion);
+      const observer = new ResizeObserver(resize); observer.observe(backdrop);
       document.addEventListener('visibilitychange', updateMotion);
-      reduced.addEventListener('change', updateMotion);
-      finePointer.addEventListener('change', onPointerModeChange);
-      window.addEventListener('pointermove', onPointerMove, { passive: true });
-      window.addEventListener('blur', onPointerLeave);
-      document.documentElement.addEventListener('pointerleave', onPointerLeave);
-      resize();
-      updateMotion();
-
+      reduced.addEventListener('change', onPointerModeChange); finePointer.addEventListener('change', onPointerModeChange);
+      window.addEventListener('pointermove', onPointerMove, { passive: true }); window.addEventListener('blur', onPointerLeave);
+      document.documentElement.addEventListener('pointerleave', onPointerLeave); resize(); updateMotion();
       const cleanup = () => {
-        if (frame) cancelAnimationFrame(frame);
-        observer.disconnect();
-        toggle?.removeEventListener('click', onToggle);
-        document.removeEventListener('particle-motion-change', onExternalMotion);
+        if (frame) cancelAnimationFrame(frame); observer.disconnect();
         document.removeEventListener('visibilitychange', updateMotion);
-        reduced.removeEventListener('change', updateMotion);
-        finePointer.removeEventListener('change', onPointerModeChange);
-        window.removeEventListener('pointermove', onPointerMove);
-        window.removeEventListener('blur', onPointerLeave);
+        reduced.removeEventListener('change', onPointerModeChange); finePointer.removeEventListener('change', onPointerModeChange);
+        window.removeEventListener('pointermove', onPointerMove); window.removeEventListener('blur', onPointerLeave);
         document.documentElement.removeEventListener('pointerleave', onPointerLeave);
-        delete backdrop.dataset.ready;
-        cleanups.delete(cleanup);
+        backdrop.dataset.running = 'false'; backdrop.dataset.pointerActive = 'false';
+        delete backdrop.dataset.ready; cleanups.delete(cleanup);
       };
       cleanups.add(cleanup);
     });
   }
-
   function cleanupBackdrops() { for (const cleanup of cleanups) cleanup(); }
-  initializeBackdrops();
-  document.addEventListener('astro:page-load', initializeBackdrops);
-  document.addEventListener('astro:before-swap', cleanupBackdrops);
-  window.addEventListener('pagehide', cleanupBackdrops);
-  window.addEventListener('pageshow', initializeBackdrops);
+  initializeBackdrops(); document.addEventListener('astro:page-load', initializeBackdrops); document.addEventListener('astro:before-swap', cleanupBackdrops);
+  window.addEventListener('pagehide', cleanupBackdrops); window.addEventListener('pageshow', initializeBackdrops);
 </script>
