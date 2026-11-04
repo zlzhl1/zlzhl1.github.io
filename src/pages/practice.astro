@@ -130,5 +130,6 @@ const opening = byId.get('getting-started');
   .more-practice h2 { font-size: 23px; }
   @media (max-width: 900px) { .map-stops { grid-template-columns: repeat(2, minmax(0, 1fr)); } .map-stage { grid-template-columns: 155px minmax(0, 1fr); } .map-articles { grid-template-columns: minmax(0, 1fr); } .stage-content { padding-inline: 20px; } }
   @media (max-width: 620px) { .map-lead { font-size: 15px; } .map-stops { gap: 10px; } .map-stops a { padding: 13px 10px; gap: 8px; } .map-stops strong { font-size: 15px; } .map-stops small { font-size: 10px; } .stop-number { font-size: 14px; } .map-stage { grid-template-columns: minmax(0, 1fr); } .stage-heading { padding: 17px 19px; border-right: 0; border-bottom: 1px dashed #b6b277; } .stage-number { display: inline-block; margin: 0 10px 0 0; font-size: 22px; vertical-align: baseline; } .stage-heading h2 { display: inline; font-size: 21px; } .stage-heading p { margin: 9px 0 4px; } .stage-content { padding: 19px; } .stage-question { font-size: 16px; } .map-welcome { flex-direction: column; align-items: flex-start; padding: 19px; gap: 14px; } }
+  @media (max-width: 380px) { .map-stops .stop-number, .map-stops .stop-arrow { display: none; } .map-stops strong { white-space: nowrap; } }
   @media (prefers-reduced-motion: reduce) { .map-stops a { transition: none; } .map-stops a:hover { transform: none; } }
 </style>
