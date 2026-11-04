@@ -10,7 +10,13 @@
 
 ### 新增栏目
 
-网站不预设栏目。你需要时再添加，无需修改页面或程序代码。
+当前已按站主设置建立「项目分享」「工程问题」「个人随笔」三个栏目。以后仍可按需添加，无需修改页面或程序代码。
+
+| 栏目 | ID |
+| --- | --- |
+| 项目分享 | `project-sharing` |
+| 工程问题 | `engineering-issues` |
+| 个人随笔 | `personal-notes` |
 
 1. 在仓库点击 **Add file → Create new file**。
 2. 文件名填写 `src/content/columns/ai-notes.md`。`ai-notes` 是栏目 ID，可换成你自己的英文短名，建议使用小写字母、数字和连字符。
