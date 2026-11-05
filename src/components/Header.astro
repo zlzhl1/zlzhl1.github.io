@@ -13,7 +13,7 @@ import HeaderLink from './HeaderLink.astro';
       <HeaderLink href={url()}>首页</HeaderLink>
       <HeaderLink href={url('posts/')}>文章</HeaderLink>
       <HeaderLink href={url('columns/')}>栏目</HeaderLink>
-      <HeaderLink href={url('practice/')}>实践地图</HeaderLink>
+      <HeaderLink href={url('practice/')} activePaths={[url('projects/')]}>项目全景</HeaderLink>
       <HeaderLink href={url('about/')}>关于</HeaderLink>
     </div>
     <a class="github-link" href={SITE.githubUrl} target="_blank" rel="noopener noreferrer" aria-label="戴夫（Dave）的 GitHub（新窗口打开）" title="戴夫（Dave） · GitHub">

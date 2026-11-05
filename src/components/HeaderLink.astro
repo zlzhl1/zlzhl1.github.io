@@ -1,11 +1,11 @@
 ---
 import type { HTMLAttributes } from 'astro/types';
 import { url } from '../lib/posts';
-type Props = HTMLAttributes<'a'>;
-const { href, class: className, ...props } = Astro.props;
+type Props = HTMLAttributes<'a'> & { activePaths?: string[] };
+const { href, class: className, activePaths = [], ...props } = Astro.props;
 const pathname = Astro.url.pathname;
 const target = typeof href === 'string' ? href : '';
-const isActive = target === url() ? pathname === target : target !== '' && (pathname === target || pathname.startsWith(target.endsWith('/') ? target : `${target}/`));
+const isActive = (target === url() ? pathname === target : target !== '' && (pathname === target || pathname.startsWith(target.endsWith('/') ? target : `${target}/`))) || activePaths.some((path) => pathname === path || pathname.startsWith(path.endsWith('/') ? path : `${path}/`));
 ---
 <a href={href} class:list={[className, { active: isActive }]} aria-current={isActive ? 'page' : undefined} {...props}><slot /></a>
 <style>

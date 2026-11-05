@@ -1,5 +1,6 @@
 import { readdir, readFile, stat } from 'node:fs/promises';
 import path from 'node:path';
+import { PROJECTS } from '../src/data/projects.ts';
 
 const root = path.resolve('dist');
 const configuredBase = process.env.SITE_BASE ?? (() => {
@@ -54,10 +55,25 @@ if (files.includes(path.join(root, 'archives/index.html')) || sitemap.includes('
 for (const file of pages) {
   const html = await readFile(file, 'utf8');
   if (html.includes('>归档</a>') || /href="[^\"]*\/archives\//.test(html)) failures.push(`${path.relative(root, file)}: outdated archive navigation`);
+  if (html.includes('>实践地图</a>')) failures.push(`${path.relative(root, file)}: outdated article-map navigation`);
   if (!html.includes('garden/lawn-mower.svg')) failures.push(`${path.relative(root, file)}: missing lawn-mower brand icon`);
 }
-const practice = await readFile(path.join(root, 'practice/index.html'), 'utf8');
-if (/<time\b/.test(practice)) failures.push('The practice map must organize by questions, not dates');
+const overview = await readFile(path.join(root, 'practice/index.html'), 'utf8');
+if (/<time\b/.test(overview)) failures.push('The project overview must not group articles by dates');
+if (!overview.includes('data-project-overview')) failures.push('Missing project portfolio overview');
+for (const project of PROJECTS) {
+  const route = `${base}/projects/${project.id}/`;
+  if (!overview.includes(`href="${route}"`)) failures.push(`Missing project detail entry: ${project.id}`);
+  if (overview.split(`data-project-card="${project.id}"`).length - 1 !== 1) failures.push(`Expected one overview card for ${project.id}`);
+  const detailPath = path.join(root, `projects/${project.id}/index.html`);
+  if (!files.includes(detailPath)) { failures.push(`Missing project page: ${project.id}`); continue; }
+  const detail = await readFile(detailPath, 'utf8');
+  for (const marker of ['data-project-architecture', 'data-project-contributions', 'data-project-decisions', 'data-project-outcomes']) {
+    if (!detail.includes(marker)) failures.push(`${project.id}: missing project narrative section ${marker}`);
+  }
+  if (!decodeURIComponent(sitemap).includes(route)) failures.push(`${project.id}: missing from sitemap`);
+  if (!detail.includes(`href="${base}/practice/"`) || !detail.includes('aria-current="page"')) failures.push(`${project.id}: missing portfolio return/active navigation`);
+}
 const columnsIndex = await readFile(path.join(root, 'columns/index.html'), 'utf8');
 const indexLinks = new Set([...columnsIndex.matchAll(/href="([^"\s]+)"/g)].map((match) => decodeURIComponent(match[1].split(/[?#]/)[0])));
 const columnPages = pages.map((file) => path.relative(root, file).split(path.sep).join('/')).filter((file) => /^columns\/.+\/index\.html$/.test(file));
@@ -67,10 +83,6 @@ for (const page of columnPages) {
   if (!decodeURIComponent(sitemap).includes(route)) failures.push(`${page}: missing from sitemap`);
 }
 const postPages = pages.filter((file) => /^posts\/.+\/index\.html$/.test(path.relative(root, file).split(path.sep).join('/')));
-for (const file of postPages) {
-  const route = `${base}/${path.relative(root, file).split(path.sep).join('/').replace(/index\.html$/, '')}`;
-  if (practice.split(`href="${route}"`).length - 1 !== 1) failures.push(`Practice map must link each published article once: ${route}`);
-}
 if (!rss.includes('<rss') || !rss.includes('<channel>')) failures.push('RSS is invalid');
 if ((rss.match(/<item>/g) || []).length !== postPages.length) failures.push('RSS article count does not match generated article pages');
 if (failures.length) {

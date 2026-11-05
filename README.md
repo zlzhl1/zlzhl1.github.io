@@ -104,7 +104,7 @@ npm.cmd run verify
 - 后备箱文章层架：`src/components/DaveTrunk.astro`，首页默认展示最多六篇真实文章，点击纸卡打开原文章。
 - 庭院、云朵与戴夫：`src/components/GardenScene.astro`；收集阳光、植物与豌豆互动：`src/components/GardenPlayground.astro`。旧粒子背景已停用。
 - 插画资源：`public/garden/`，庭院WebP由内置图像生成工具制作，合计约591 KiB；提示词与透明度验收见素材记录。左上角红色割草机为代码绘制的SVG，浏览器图标使用同一主题。
-- 实践地图：`src/pages/practice.astro`，按资料治理、知识检索、训练实验与应用交付组织阅读入口，不按年月分组。地图引用已有文章，不复制文章；新发表且未加入主题的文章会进入“继续探索”。
+- 项目全景：`src/pages/practice.astro`为四项目总览，沿用原入口地址；`src/data/projects.ts`维护项目事实及结果口径，`src/pages/projects/[project].astro`生成独立详情页，展示业务目标、架构、个人贡献、工程取舍与结果。相关技术文章按原URL引用；“栏目”继续负责文章分类。
 - 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
 
 当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
