@@ -2,10 +2,20 @@
 import BaseLayout from '../layouts/BaseLayout.astro';
 import DaveTrunk from '../components/DaveTrunk.astro';
 import DaveFriend from '../components/DaveFriend.astro';
-import { getPosts } from '../lib/posts';
+import { getPosts, url } from '../lib/posts';
 const posts = await getPosts();
 ---
 <BaseLayout home>
+  <section class="home-profile" aria-label="Dave 个人简介">
+    <div>
+      <span class="home-profile-kicker">DAVE · AI 应用与工程实践</span>
+      <p>记录企业 AI、Agent、知识治理、模型训练和工程问题，把项目经验写成可以继续复用的笔记。</p>
+    </div>
+    <nav aria-label="了解 Dave">
+      <a href={url('about/')}>关于 Dave <span aria-hidden="true">→</span></a>
+      <a href={url('practice/')}>项目全景 <span aria-hidden="true">→</span></a>
+    </nav>
+  </section>
   <div class="home-scene">
     <DaveFriend />
     <DaveTrunk posts={posts.slice(0, 6)} total={posts.length} />
@@ -13,9 +23,18 @@ const posts = await getPosts();
 </BaseLayout>
 <style>
   :global(main.home-page) { width: min(1280px, calc(100% - 40px)); margin-top: 16px; margin-bottom: 0; padding-top: 16px; padding-bottom: 18px; }
+  .home-profile { display: flex; align-items: center; justify-content: space-between; gap: 22px; max-width: 1000px; margin: 0 auto 14px; padding: 12px 17px; border: 2px solid #9b8656; border-radius: 10px 13px 9px 12px; background: #fff3cdcc; box-shadow: 0 4px #6a6f3c26; }
+  .home-profile-kicker { display: block; color: #668044; font: 700 11px/1.4 var(--font-mono); letter-spacing: .08em; }
+  .home-profile p { margin: 3px 0 0; color: #705f3d; font-size: 13px; line-height: 1.65; }
+  .home-profile nav { display: flex; flex: 0 0 auto; gap: 12px; }
+  .home-profile nav a { color: #56733a; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; }
+  .home-profile nav a:hover { color: #8a6b35; }
+  .home-profile nav span { margin-left: 3px; font-size: 15px; }
   .home-scene { --dave-size: clamp(76px, 16vw, 240px); position: relative; display: grid; grid-template-columns: var(--dave-size) minmax(0, 1000px); justify-content: center; gap: 24px; }
   @media (max-width: 720px) {
     :global(main.home-page) { width: calc(100% - 20px); padding-top: 16px; padding-bottom: 30px; }
+    .home-profile { display: block; margin-bottom: 12px; padding: 11px 13px; }
+    .home-profile nav { margin-top: 7px; gap: 15px; }
     .home-scene { display: block; padding-top: calc(var(--dave-size) * 1.223104 - 65px); }
   }
 </style>

@@ -1,6 +1,7 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
+import { url } from '../lib/posts';
 ---
 
 <BaseLayout title="关于 Dave" description="Dave 的个人技术博客，记录 AI 应用、Agent、知识库、模型训练、工程问题与个人思考。">
@@ -8,8 +9,33 @@ import { SITE } from '../config';
     <section class="main-column">
       <header class="page-heading"><h1>关于 Dave</h1></header>
       <div class="prose about-prose">
-        <p>我是 Dave。这是我的公开技术笔记本，用来记录做过的事情、遇到的问题，以及我对技术和工作的持续思考。</p>
-        <p>我关注 AI 应用、Agent、知识库、模型训练、办公自动化和工程实践。文章会尽量从具体问题出发，写清楚背景、判断、实现过程、结果和适用边界。</p>
+        <p class="about-lead">我是 Dave，主要围绕企业 AI 应用、Agent 平台、知识治理和领域模型训练开展工作，关注技术方案如何真正进入业务流程。</p>
+        <p>我会在方案设计、工程实现、实验评估和团队协作之间来回切换。这个页面保留一份简短的个人概览，文章则继续记录更具体的问题、判断、实现过程和适用边界。</p>
+
+        <div class="about-stats" aria-label="个人工作概览">
+          <div><strong>4</strong><span>项目方向</span></div>
+          <div><strong>3 TB</strong><span>资料治理规模</span></div>
+          <div><strong>93/100</strong><span>人工业务评审</span></div>
+          <div><strong>近三成</strong><span>相关任务耗时降低</span></div>
+        </div>
+        <p class="about-note">页面中的数字保留原有项目口径：团队整体结果、本人确认结果和历史评测结果分别表达，不把评审分数写成准确率。</p>
+
+        <h2>我在做什么</h2>
+        <ul>
+          <li><strong>企业 AI 应用：</strong>把身份、模型接入、请求调度、会话状态和经验沉淀组织成可持续使用的入口。</li>
+          <li><strong>知识治理与检索：</strong>处理复杂资料、实体歧义、图谱与向量检索，让答案能够回到来源证据。</li>
+          <li><strong>模型训练与评测：</strong>围绕数据质量、CPT→SFT、实验对照、能力保持和版本选择建立可追溯流程。</li>
+          <li><strong>业务工作流：</strong>把客服等多轮流程拆成节点、状态和工具动作，处理续跑、幂等和人工兜底。</li>
+        </ul>
+
+        <h2>项目概览</h2>
+        <ul class="about-projects">
+          <li><a href={url('projects/fando/')}>企业 Agent 平台</a><span>网关、调度、会话状态与团队协作</span></li>
+          <li><a href={url('projects/knowledge/')}>知识治理与检索平台</a><span>资料治理、实体归一与来源追踪</span></li>
+          <li><a href={url('projects/model-training/')}>领域模型训练与评测</a><span>训练路线、实验决策与误例反馈</span></li>
+          <li><a href={url('projects/customer-service/')}>AI 客服售后工作流</a><span>节点化流程、Redis 续跑与幂等</span></li>
+        </ul>
+
         <h2>这里会写什么</h2>
         <ul>
           <li><strong>项目分享：</strong>记录项目目标、方案选择、实现过程和实际复盘。</li>
@@ -22,3 +48,27 @@ import { SITE } from '../config';
     </section>
   </div>
 </BaseLayout>
+
+<style>
+  .about-lead { color: #4d5f32 !important; font-size: 20px !important; font-weight: 700; line-height: 1.8 !important; }
+  .about-stats { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; margin: 24px 0 8px; }
+  .about-stats div { min-width: 0; padding: 13px 12px 11px; border: 1px solid #c3b27d; border-radius: 8px 10px 7px 9px; background: #f4e9c5; }
+  .about-stats strong { display: block; color: #668044; font-size: 22px; line-height: 1.35; }
+  .about-stats span { display: block; margin-top: 3px; color: #8a764e; font-size: 11px; line-height: 1.5; }
+  .about-note { color: #8b7855 !important; font-size: 12px !important; line-height: 1.7 !important; }
+  .about-prose h2 { margin: 30px 0 12px; color: #5a713d; font-size: 21px; }
+  .about-prose ul { padding-left: 1.25em; margin: 0 0 20px; color: #625338; }
+  .about-prose li { margin: 8px 0; line-height: 1.85; }
+  .about-projects { padding: 0 !important; list-style: none; }
+  .about-projects li { display: flex; align-items: baseline; justify-content: space-between; gap: 18px; padding: 11px 14px; border: 1px solid #cfbe8a; border-radius: 7px; background: #fff8de; }
+  .about-projects li + li { margin-top: 8px; }
+  .about-projects a { color: #536f36; font-weight: 700; text-decoration: none; }
+  .about-projects a:hover { color: #789347; text-decoration: underline; }
+  .about-projects span { color: #887550; font-size: 12px; text-align: right; }
+  @media (max-width: 680px) {
+    .about-lead { font-size: 18px !important; }
+    .about-stats { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .about-projects li { display: block; }
+    .about-projects span { display: block; margin-top: 3px; text-align: left; }
+  }
+</style>
