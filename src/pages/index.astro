@@ -6,34 +6,34 @@ import { getPosts, url } from '../lib/posts';
 const posts = await getPosts();
 ---
 <BaseLayout home>
-  <section class="home-profile" aria-label="Dave 个人简介">
-    <span class="home-profile-rope rope-left" aria-hidden="true"></span>
-    <span class="home-profile-rope rope-right" aria-hidden="true"></span>
-    <div class="home-profile-plank">
-      <span class="home-profile-screw screw-left" aria-hidden="true"></span>
-      <span class="home-profile-screw screw-right" aria-hidden="true"></span>
-      <div class="home-profile-copy">
-        <span class="home-profile-kicker">DAVE 的庭院笔记</span>
-        <p>记录 AI、Agent、知识治理与模型训练的实践笔记。</p>
-      </div>
-      <nav aria-label="了解 Dave">
-        <a href={url('about/')}>认识 Dave <span aria-hidden="true">↗</span></a>
-        <a href={url('practice/')}>看项目 <span aria-hidden="true">↗</span></a>
-      </nav>
-    </div>
-  </section>
   <div class="home-scene">
     <DaveFriend />
     <DaveTrunk posts={posts.slice(0, 6)} total={posts.length} />
+    <section class="home-profile" aria-label="Dave 个人简介">
+      <span class="home-profile-rope rope-left" aria-hidden="true"></span>
+      <span class="home-profile-rope rope-right" aria-hidden="true"></span>
+      <div class="home-profile-plank">
+        <span class="home-profile-screw screw-left" aria-hidden="true"></span>
+        <span class="home-profile-screw screw-right" aria-hidden="true"></span>
+        <div class="home-profile-copy">
+          <span class="home-profile-kicker">DAVE 的庭院笔记</span>
+          <p>记录 AI、Agent、知识治理与模型训练的实践笔记。</p>
+        </div>
+        <nav aria-label="了解 Dave">
+          <a href={url('about/')}>认识 Dave <span aria-hidden="true">↗</span></a>
+          <a href={url('practice/')}>看项目 <span aria-hidden="true">↗</span></a>
+        </nav>
+      </div>
+    </section>
   </div>
 </BaseLayout>
 <style>
   :global(main.home-page) { width: min(1280px, calc(100% - 40px)); margin-top: 16px; margin-bottom: 0; padding-top: 16px; padding-bottom: 18px; }
-  .home-profile { position: relative; max-width: 700px; margin: 0 auto 22px; padding: 29px 12px 0; overflow: visible; }
+  .home-profile { position: absolute; z-index: 8; top: 36px; right: 8px; width: min(190px, 18vw); max-width: none; margin: 0; padding: 29px 0 0; overflow: visible; }
   .home-profile-rope { position: absolute; z-index: 0; top: 2px; width: 3px; height: 32px; border-radius: 4px; background: repeating-linear-gradient(170deg, #65482c 0 4px, #c99a5b 5px 7px); box-shadow: 1px 0 #392b20; transform-origin: top center; }
   .rope-left { left: 19%; transform: rotate(-12deg); }
   .rope-right { right: 19%; transform: rotate(12deg); }
-  .home-profile-plank { position: relative; z-index: 1; display: flex; align-items: center; justify-content: space-between; gap: 20px; min-height: 88px; padding: 17px 29px; border: 5px solid #65482c; border-radius: 12px 9px 14px 10px; background: repeating-linear-gradient(176deg, transparent 0 13px, #885d3429 14px 15px, transparent 16px 27px), linear-gradient(176deg, #d6ae6e, #b98245 68%, #9f6d3b); box-shadow: inset 0 2px #f9dba0, inset 0 -4px #82572f, 0 6px #3d4b2b36; transform: rotate(-.8deg); transform-origin: 50% -22px; animation: home-sign-sway 8s ease-in-out infinite; }
+  .home-profile-plank { position: relative; z-index: 1; display: block; min-height: 88px; padding: 16px 20px 17px; border: 5px solid #65482c; border-radius: 12px 9px 14px 10px; background: repeating-linear-gradient(176deg, transparent 0 13px, #885d3429 14px 15px, transparent 16px 27px), linear-gradient(176deg, #d6ae6e, #b98245 68%, #9f6d3b); box-shadow: inset 0 2px #f9dba0, inset 0 -4px #82572f, 0 6px #3d4b2b36; transform: rotate(-.8deg); transform-origin: 50% -22px; animation: home-sign-sway 8s ease-in-out infinite; }
   .home-profile-plank::after { content: ''; position: absolute; left: 24px; right: 24px; bottom: 10px; height: 1px; background: #f1d08b52; box-shadow: 0 -2px #81552d38; pointer-events: none; }
   .home-profile-screw { position: absolute; top: 50%; width: 9px; height: 9px; border: 2px solid #76512e; border-radius: 50%; background: #c29a60; box-shadow: inset 1px 1px #f3d59b; transform: translateY(-50%); }
   .screw-left { left: 13px; }
@@ -41,21 +41,21 @@ const posts = await getPosts();
   .home-profile-copy { position: relative; z-index: 1; min-width: 0; }
   .home-profile-kicker { display: block; color: #fff1c6; font: 700 11px/1.4 var(--font-mono); letter-spacing: .09em; text-shadow: 0 1px #79502d; }
   .home-profile p { margin: 3px 0 0; color: #f6dfac; font-size: 13px; line-height: 1.65; text-shadow: 0 1px #76502c; }
-  .home-profile nav { position: relative; z-index: 1; display: flex; flex: 0 0 auto; gap: 8px; }
-  .home-profile nav a { display: inline-flex; align-items: center; gap: 4px; min-height: 32px; padding: 4px 9px; border: 2px solid #6b4b2c; border-radius: 7px 5px 8px 6px; background: #f1d79a; color: #536c36; box-shadow: inset 0 2px #fff0bd, 0 2px #78542d; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: transform .18s ease, background .18s ease; }
+  .home-profile nav { position: relative; z-index: 1; display: grid; gap: 6px; margin-top: 10px; }
+  .home-profile nav a { display: inline-flex; align-items: center; justify-content: space-between; gap: 4px; min-height: 30px; padding: 4px 8px; border: 2px solid #6b4b2c; border-radius: 7px 5px 8px 6px; background: #f1d79a; color: #536c36; box-shadow: inset 0 2px #fff0bd, 0 2px #78542d; font-size: 12px; font-weight: 700; text-decoration: none; white-space: nowrap; transition: transform .18s ease, background .18s ease; }
   .home-profile nav a:hover { background: #fff0b9; color: #3f5a2a; transform: translateY(-2px) rotate(-1deg); }
   .home-profile nav span { font-size: 15px; line-height: 1; }
   @keyframes home-sign-sway { 0%, 100% { transform: rotate(-.8deg); } 50% { transform: rotate(.8deg); } }
   .home-scene { --dave-size: clamp(76px, 16vw, 240px); position: relative; display: grid; grid-template-columns: var(--dave-size) minmax(0, 1000px); justify-content: center; gap: 24px; }
   @media (max-width: 720px) {
     :global(main.home-page) { width: calc(100% - 20px); padding-top: 16px; padding-bottom: 30px; }
-    .home-profile { margin-bottom: 17px; padding: 27px 7px 0; }
-    .home-profile-plank { display: block; padding: 16px 22px 17px; }
+    .home-profile { position: relative; top: auto; right: auto; width: 100%; max-width: 700px; margin: 17px auto 4px; padding: 27px 7px 0; }
+    .home-profile-plank { padding: 16px 22px 17px; }
     .home-profile-rope { height: 30px; }
     .rope-left { left: 17%; }
     .rope-right { right: 17%; }
-    .home-profile nav { margin-top: 10px; gap: 8px; }
-    .home-profile nav a { min-height: 30px; padding-inline: 8px; }
+    .home-profile nav { display: flex; margin-top: 10px; gap: 8px; }
+    .home-profile nav a { flex: 1; min-height: 30px; padding-inline: 8px; }
     .home-scene { display: block; padding-top: calc(var(--dave-size) * 1.223104 - 65px); }
   }
   @media (prefers-reduced-motion: reduce) { .home-profile-plank { animation: none; } }
