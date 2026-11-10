@@ -3,11 +3,22 @@ import BaseLayout from '../layouts/BaseLayout.astro';
 import { SITE } from '../config';
 ---
 
-<BaseLayout title="关于我" description={`我是 ${SITE.author}，关注 AI 应用、Agent、知识库与办公自动化，记录实践与个人成长。`}>
+<BaseLayout title="关于 Dave" description="Dave 的个人技术博客，记录 AI 应用、Agent、知识库、模型训练、工程问题与个人思考。">
   <div>
     <section class="main-column">
-      <header class="page-heading"><h1>关于我</h1></header>
-      <div class="prose about-prose"><p>我是 {SITE.author}，在这里记录 AI 实践与个人成长。</p><p>关注 AI 应用、Agent、知识库、模型训练与办公自动化。</p><p><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">戴夫（Dave）的 GitHub</a></p></div>
+      <header class="page-heading"><h1>关于 Dave</h1></header>
+      <div class="prose about-prose">
+        <p>我是 Dave。这是我的公开技术笔记本，用来记录做过的事情、遇到的问题，以及我对技术和工作的持续思考。</p>
+        <p>我关注 AI 应用、Agent、知识库、模型训练、办公自动化和工程实践。文章会尽量从具体问题出发，写清楚背景、判断、实现过程、结果和适用边界。</p>
+        <h2>这里会写什么</h2>
+        <ul>
+          <li><strong>项目分享：</strong>记录项目目标、方案选择、实现过程和实际复盘。</li>
+          <li><strong>工程问题：</strong>整理排查过程、工具使用、系统设计和踩坑经验。</li>
+          <li><strong>个人随笔：</strong>写下学习记录、工作方法和阶段性想法。</li>
+        </ul>
+        <p>这个站点也作为一个可复用的 Astro + Markdown 博客模板：内容放在 Markdown 文件中，代码托管在 GitHub，提交后由 GitHub Actions 自动发布到 GitHub Pages。</p>
+        <p><a href={SITE.githubUrl} target="_blank" rel="noopener noreferrer">访问 Dave 的 GitHub</a></p>
+      </div>
     </section>
   </div>
 </BaseLayout>

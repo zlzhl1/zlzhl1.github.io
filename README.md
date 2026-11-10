@@ -1,94 +1,122 @@
 # 戴夫（Dave）的后备箱
 
-使用 [Astro](https://github.com/withastro/astro) 与 Markdown 构建的个人博客，采用《植物大战僵尸》式的明亮庭院、木质导航和戴夫后备箱。真实文章直接放在汽车货厢的纸卡层架里，可以收集阳光、发射豌豆、和戴夫打招呼或敲敲车牌。文章和栏目由 GitHub 仓库管理，通过 GitHub Actions 发布到 [GitHub Pages](https://zlzhl1.github.io/)。设计见 [庭院方案](docs/garden-design.md)，生成插画与完整提示词见 [素材记录](docs/art-prompts-pvz.md)。
+这是 Dave 的个人技术博客，也是一个可以复用的 Astro + Markdown 博客模板。
 
-## 在 GitHub 管理内容
+网站用《植物大战僵尸》式的明亮庭院、木质导航和绿色后备箱承载文章。内容以纸卡形式直接放在后备箱里，页面保留轻量的阳光、植物和戴夫互动。博客当前记录 AI 应用、Agent、知识库、模型训练、工程问题、项目实践和个人思考。
 
-打开 [网站源码仓库](https://github.com/zlzhl1/zlzhl1.github.io)，登录你的 `zlzhl1` 账号后操作。只有具有仓库写入权限的账号才能提交或合并内容到 `main` 并发布网站；保持仓库写入权限只授予你，就只有你能维护。公开网站没有新增、编辑或转移入口，访客的 Fork 或 Pull Request 不会直接改动网站。
+如果你是来了解 Dave 的，可以先看 [关于 Dave](https://zlzhl1.github.io/about/)、[项目全景](https://zlzhl1.github.io/practice/) 和首页文章。如果你想把这套代码作为自己的博客起点，可以从“使用这套模板”开始。
 
-每次提交到 `main` 后，在仓库的 **Actions** 查看部署结果。成功后，变更才会出现在网站上。
+## 关于 Dave
 
-### 新增栏目
+Dave 用这个站点记录具体项目、工程排查和个人学习。文章尽量从真实问题出发，说明背景、判断、实现过程、结果和适用边界，避免只留下零散的工具名或结论。
 
-当前已按站主设置建立「项目分享」「工程问题」「个人随笔」三个栏目。以后仍可按需添加，无需修改页面或程序代码。
+网站目前有三个栏目：
 
-| 栏目 | ID |
-| --- | --- |
-| 项目分享 | `project-sharing` |
-| 工程问题 | `engineering-issues` |
-| 个人随笔 | `personal-notes` |
+| 栏目 | 内容方向 | ID |
+| --- | --- | --- |
+| 项目分享 | 项目目标、方案、实现和复盘 | `project-sharing` |
+| 工程问题 | 排错、系统设计、工具和工程经验 | `engineering-issues` |
+| 个人随笔 | 学习记录、工作方法和阶段性想法 | `personal-notes` |
 
-1. 在仓库点击 **Add file → Create new file**。
-2. 文件名填写 `src/content/columns/ai-notes.md`。`ai-notes` 是栏目 ID，可换成你自己的英文短名，建议使用小写字母、数字和连字符。
-3. 从 [栏目模板](templates/column.md) 复制内容，填写名称，例如：
+## 这个模板适合谁
+
+这套模板适合想用 GitHub 管理 Markdown 内容、用 GitHub Pages 发布静态博客，并且希望保留清晰栏目、文章归档、RSS、搜索和响应式阅读体验的人。
+
+它适合个人技术博客、项目记录、学习笔记和作品集。访客只能阅读网站，内容维护仍由仓库写入者完成，不需要额外的数据库或公开 CMS。
+
+## 模板提供什么
+
+- Astro 静态站点和 Markdown 内容集合。
+- 自定义栏目、栏目文章统计和空栏目页面。
+- 文章列表、文章详情、归档、站内搜索、RSS 和 sitemap。
+- 通过修改文章 frontmatter，将原文章直接转移到其他栏目，原文件名、正文和链接保持不变。
+- GitHub Pages 工作流：提交到 `main` 后自动检查、构建和部署。
+- 主题化的首页场景、响应式布局、键盘可操作的互动和清晰的文章阅读页面。
+
+## 使用这套模板
+
+下面的步骤按“把它改成你的博客”来写。你可以 Fork 这个仓库，也可以复制代码后建立自己的 GitHub 仓库。
+
+### 1. 复制仓库并安装依赖
+
+```powershell
+git clone https://github.com/zlzhl1/zlzhl1.github.io.git my-blog
+cd my-blog
+npm.cmd ci
+```
+
+如果你使用自己的 GitHub 仓库，请把后续命令中的远程地址换成你的仓库地址。Node.js 版本以 `package.json` 的 `engines` 为准。
+
+### 2. 先改网站身份
+
+编辑 `src/config.ts`，把模板中的 Dave 信息换成你的公开信息：
+
+```ts
+export const SITE = {
+  title: '你的网站名称',
+  description: '一句话介绍你的网站。',
+  author: '你的公开称呼',
+  githubUrl: 'https://github.com/你的账号',
+  siteUrl: 'https://你的账号.github.io',
+};
+```
+
+再编辑 `src/pages/about.astro`，把 About 页面改成你的个人介绍。首页的视觉主题可以继续使用，也可以按自己的品牌替换 `public/garden/` 和组件样式。
+
+### 3. 新建栏目
+
+栏目是 Markdown 文件，不需要修改页面代码。复制 `templates/column.md`，在 `src/content/columns/` 下新建文件，例如 `ai-notes.md`：
 
 ```markdown
 ---
-title: "大模型笔记"
+title: "AI 笔记"
 description: ""
-order: 0
+order: 40
 ---
 ```
 
-4. 点击 **Commit changes**，提交到 `main`。新增的栏目会在下次部署后自动出现在网站中，即使暂时没有文章也可访问。
+文件名就是栏目 ID，只建议使用小写字母、数字和连字符。`title` 必填，`description` 和 `order` 可省略，`order` 越小越靠前。
 
-`title` 必填；`description` 可省略；`order` 可省略，默认 `0`，数字越小越靠前。修改 `title` 只改显示名称，不改变栏目链接。栏目 ID 来自文件名，重命名文件时需要同步修改引用它的文章。
+### 4. 新建文章
 
-### 新增文章
-
-1. 点击 **Add file → Create new file**，填写 `src/content/posts/my-first-note.md`。
-2. 从 [文章模板](templates/article.md) 复制内容，填写文章信息与 Markdown 正文。
-3. 如果要放入某个栏目，在开头的 `---` 之间填写 `column: ai-notes`；先确认 `src/content/columns/ai-notes.md` 已存在。也可以省略 `column`，文章仍会显示在首页和全部文章中。
-4. 草稿完成后把 `draft` 改为 `false`，确认发布日期，再提交到 `main`。
+复制 `templates/article.md`，在 `src/content/posts/` 下新建 Markdown 文件，例如 `my-first-note.md`：
 
 ```markdown
 ---
 title: "文章标题"
 description: "用一句话说明文章内容。"
-date: 2026-10-29
+date: 2026-11-10
 column: ai-notes
-tags: ["大模型"]
-draft: true
+tags: ["AI"]
+draft: false
 featured: false
 ---
 
-正文使用 Markdown 编写。
+从一个具体问题开始写正文。
 ```
 
-| 字段 | 用法 |
-| --- | --- |
-| `title` | 必填，文章标题 |
-| `description` | 必填，列表摘要与页面描述 |
-| `date` | 必填，发布日期，格式为 `YYYY-MM-DD` |
-| `column` | 可选，只填写一个已存在的栏目 ID，不填写数组 |
-| `tags` | 可选，字符串数组 |
-| `draft` | 可选，默认 `false`；设为 `true` 后不公开 |
-| `featured` | 可选，保留的精选标记，默认 `false` |
+`column` 只能填写一个已经存在的栏目 ID，也可以完全省略。`draft: true` 的文章不会公开；文章日期晚于当前日期时，也不会出现在公开页面中。文章 URL 由文件名生成，发表后不要为了改标题或栏目而重命名文件。
 
-文章地址由文件名生成，例如 `/posts/my-first-note/`。发表后保留原文件名，修改标题和栏目不会改变文章链接。
+### 5. 把文章转移到其他栏目
 
-草稿和未来日期的文章不会公开。到达发布日期后，需要再次提交或在 **Actions** 手动运行部署，网站才会重新构建。模板在 `templates/`，写作计划在 `editorial/`，都不会自动成为文章或栏目。
+编辑原文章的 frontmatter，把原来的栏目 ID 改成目标栏目：
 
-### 将文章转移到其他栏目
+```diff
+- column: ai-notes
++ column: engineering-issues
+```
 
-1. 打开**原来的**文章文件，例如 `src/content/posts/my-first-note.md`，点击铅笔图标编辑。
-2. 将原有的 `column: ai-notes` 改为目标栏目的 ID，例如 `column: engineering-notes`。目标栏目必须已存在。
-3. 提交这一个文件的修改到 `main`。
+这会直接改变原文章的栏目归属：原栏目不再列出它，目标栏目会列出它，文章正文、文件名、URL 和总数都保持不变。不要复制文章，也不要同时保留两个 `column` 字段。
 
-这是转移原文章：原栏目不再列出它，目标栏目开始列出它，文章总数与链接保持不变。不要复制文章，不要新增第二个 `column` 字段，也不要为了转移栏目而改文件名。要取消栏目归属，删除 `column` 这一行即可。
+### 6. 本地预览和发布
 
-删除栏目之前，先把引用它的文章转移到其他栏目或删除其 `column` 字段，再删除栏目文件。引用不存在的栏目会导致构建失败，避免文章被悄悄归错栏目。
-
-## 本地运行
-
-使用 `package.json` 要求的 Node.js 版本。在 Windows PowerShell 中使用 `npm.cmd`，无需调整执行策略。
+开发时运行：
 
 ```powershell
-npm.cmd ci
 npm.cmd run dev
 ```
 
-发布前检查：
+发布前运行：
 
 ```powershell
 npm.cmd run check
@@ -97,21 +125,37 @@ npm.cmd run build
 npm.cmd run verify
 ```
 
-## 网站配置与部署
+确认检查通过后，将修改提交到 GitHub 仓库的 `main` 分支。`.github/workflows/deploy.yml` 会自动执行检查、构建和 GitHub Pages 部署；部署完成后，打开你的 Pages 地址即可看到更新。
 
-- 名称、简介、作者和 GitHub 入口：`src/config.ts`。网站统一使用 **戴夫（Dave）**。
-- 全局设计变量与基础排版：`src/styles/global.css`；页面工具样式：`src/styles/site.css`；本地 Atkinson 字体：`src/assets/fonts/`。这些样式已重新设计，并非官方模板原样外观。
-- 后备箱文章层架：`src/components/DaveTrunk.astro`，首页默认展示最多六篇真实文章，点击纸卡打开原文章。
-- 庭院、云朵与戴夫：`src/components/GardenScene.astro`；收集阳光、植物与豌豆互动：`src/components/GardenPlayground.astro`。旧粒子背景已停用。
-- 插画资源：`public/garden/`，庭院WebP由内置图像生成工具制作，合计约591 KiB；提示词与透明度验收见素材记录。左上角红色割草机为代码绘制的SVG，浏览器图标使用同一主题。
-- 项目全景：`src/pages/practice.astro`为四项目总览，沿用原入口地址；`src/data/projects.ts`维护项目事实及结果口径，`src/pages/projects/[project].astro`生成独立详情页，展示业务目标、架构、个人贡献、工程取舍与结果。相关技术文章按原URL引用；“栏目”继续负责文章分类。
-- 部署流程：`.github/workflows/deploy.yml`，提交到 `main` 后自动执行。
+## 项目结构
 
-当前仓库为 `zlzhl1/zlzhl1.github.io`，网站地址为 `https://zlzhl1.github.io/`。项目也支持普通仓库的子路径部署，由 Astro 配置根据 `GITHUB_REPOSITORY` 推断；如需覆盖，设置 `PUBLIC_SITE_URL` 和 `SITE_BASE`。自定义域名还需要配置 GitHub Pages 和域名解析。
+```text
+src/
+├─ config.ts                 # 网站名称、简介、作者和 GitHub 地址
+├─ content/posts/            # 文章 Markdown
+├─ content/columns/          # 栏目 Markdown
+├─ pages/                    # 首页、文章、栏目、归档、About 等页面
+├─ components/               # 导航、后备箱、文章列表和互动组件
+└─ styles/                   # 全局样式和页面样式
+templates/                   # 栏目和文章模板
+public/                      # 静态图片、图标和其他资源
+.github/workflows/           # GitHub Pages 自动部署
+```
 
-## 官方参考
+## 维护规则
 
-- [Astro 内容集合](https://docs.astro.build/en/guides/content-collections/)
-- [Astro 中的 Markdown](https://docs.astro.build/en/guides/markdown-content/)
+- 内容维护入口是 GitHub 仓库中的 Markdown 文件。
+- 栏目 ID 一旦被文章引用，删除或重命名栏目之前要先处理这些文章的 `column` 字段。
+- 文章迁移只修改原文章的单个 `column` 字段，不复制文章。
+- `templates/` 和 `editorial/` 只是模板与写作参考，不会自动成为公开文章。
+- 主题中的互动是阅读体验增强项，不影响文章阅读和键盘操作。
+
+## 相关链接
+
+- [在线网站](https://zlzhl1.github.io/)
+- [Dave 的 GitHub](https://github.com/zlzhl1)
+- [Astro](https://github.com/withastro/astro)
+- [Astro 内容集合文档](https://docs.astro.build/en/guides/content-collections/)
 - [部署到 GitHub Pages](https://docs.astro.build/en/guides/deploy/github/)
-- [第三方许可](THIRD_PARTY_NOTICES.md)
+- [庭院设计记录](docs/garden-design.md)
+- [插画与提示词记录](docs/art-prompts-pvz.md)
